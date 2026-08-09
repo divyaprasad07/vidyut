@@ -14,6 +14,7 @@ import {
   getWeakInTopic,
   getTeacherRatingLeaderboard,
   getStudentQuizHistory,
+  getPlatinumBadgeCount,
 } from "./services/analytics.js";
 import { checkTtsAvailability, synthesizeSpeech, SUPPORTED_TTS_LANGUAGES } from "./services/ttsService.js";
 import { getChatReply, chatConfigured } from "./services/chatService.js";
@@ -108,7 +109,8 @@ app.get("/api/students/:id", async (req, res) => {
   if (!student) return res.status(404).json({ error: "not found" });
   const attempts = await getStudentQuizHistory(req.params.id);
   const streak = computeStreak(attempts.map((a) => a.timestamp));
-  res.json({ ...student, streak });
+  const platinumBadges = await getPlatinumBadgeCount(req.params.id);
+  res.json({ ...student, streak, platinumBadges });
 });
 
 app.get("/api/students/:id/badges", async (req, res) => {
@@ -193,6 +195,7 @@ app.post("/api/attempts", async (req, res) => {
     answers, // [{questionId, submittedAnswer, timeTakenSec}]
     autoSubmitted = false,
     violationType = null,
+    quizMode = null, // "mcq" | "short" | "mixed", used for the Platinum badge below
   } = req.body;
 
   const student = await getDoc("students", studentId);
@@ -234,6 +237,7 @@ app.post("/api/attempts", async (req, res) => {
     timestamp: new Date().toISOString(),
     autoSubmitted,
     violationType,
+    quizMode,
   });
 
   const newRatings = { ...student.ratings, [topicId]: { rating, history } };

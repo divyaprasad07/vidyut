@@ -279,7 +279,34 @@ non-English language is a genuine first real-world test. If translation
 fails, it falls back to speaking the original English text rather than
 staying silent.
 
-## 10. Known simplifications (see the honest status write-up in chat)
+## 10. Platinum badges
+
+Every time a student answers all questions correctly on an 8+ question
+quiz taken in **Multiple choice** mode specifically (not Short answer or
+Mixed), they earn a Platinum badge. Unlike the bronze/silver/gold/diamond
+mastery tiers (which reflect current rating and can be lost if a
+student's rating drops), Platinum badges are permanent, one per
+qualifying attempt, so a student can rack up any number over time. The
+count shows as a small white/silver badge right next to the student's
+name on the home screen.
+
+No new database collection needed for this, it's computed by counting
+existing quiz attempts that match the criteria
+(`server/services/analytics.js`, `getPlatinumBadgeCount`), the same
+pattern the rest of the app's derived stats use.
+
+**Worth confirming your intent matches mine**: "in an mcq" was
+interpreted literally, as in, the quiz mode picker on the home screen was
+set to "Multiple choice" specifically when the quiz was taken. A perfect
+score in Short answer or Mixed mode does not earn one. Verified this
+distinction directly: a perfect MCQ-mode quiz correctly awarded a badge,
+an immediately following perfect Short-answer-mode quiz correctly did
+not, and a second perfect MCQ quiz correctly brought the count to 2. If
+you actually meant "any quiz mode, doesn't have to be pure MCQ," let me
+know and it's a one-line change (drop the `quizMode === "mcq"` check in
+`getPlatinumBadgeCount`).
+
+## 11. Known simplifications (see the honest status write-up in chat)
 
 - Data store is local JSON, not live Firestore, until you provide a
   service account key.

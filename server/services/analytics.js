@@ -102,3 +102,23 @@ export async function getStudentQuizHistory(studentId) {
     .filter((a) => a.studentId === studentId)
     .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 }
+
+/**
+ * Count of Platinum badges: one per quiz attempt where the student
+ * answered every question correctly, out of at least 8 questions, taken
+ * in Multiple Choice mode specifically (not Short answer or Mixed).
+ * Deliberately not deduplicated, a student earns a new badge instance
+ * every time they qualify, not just once, so this is a plain count over
+ * attempts, not a boolean flag. No new collection needed, everything
+ * required is already on the attempt record.
+ */
+export async function getPlatinumBadgeCount(studentId) {
+  const attempts = await getCollection("attempts");
+  return attempts.filter(
+    (a) =>
+      a.studentId === studentId &&
+      a.quizMode === "mcq" &&
+      a.questionsAttempted >= 8 &&
+      a.score === a.questionsAttempted
+  ).length;
+}

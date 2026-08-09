@@ -59,7 +59,20 @@ export default function StudentHome() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <p className="font-body text-sm text-slate-400">Welcome back</p>
-            <h1 className="font-display text-2xl text-paper">{student.name}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="font-display text-2xl text-paper">{student.name}</h1>
+              {student.platinumBadges > 0 && (
+                <span
+                  className="inline-flex items-center gap-1 bg-gradient-to-br from-white to-slate-300 text-night text-xs font-display font-bold px-2 py-0.5 rounded-full shrink-0"
+                  title={`${student.platinumBadges} Platinum Badge${student.platinumBadges === 1 ? "" : "s"}, a perfect score on an 8+ question Multiple Choice quiz`}
+                >
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                    <polygon points="12,2 22,9 18,22 6,22 2,9" fill="currentColor" opacity="0.85" />
+                  </svg>
+                  {student.platinumBadges}
+                </span>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <StreakFlame current={student.streak.current} longest={student.streak.longest} />

@@ -109,6 +109,7 @@ export default function Quiz() {
         answers: finalAnswers,
         autoSubmitted,
         violationType,
+        quizMode, // needed server-side to award the Platinum badge only for MCQ-mode perfect scores
       });
       setResult({
         queued,
@@ -120,7 +121,7 @@ export default function Quiz() {
       });
       setDone(true);
     },
-    [topicId]
+    [topicId, quizMode]
   );
 
   // Tier 1 feature 5: quiz-integrity. The first two times a student leaves

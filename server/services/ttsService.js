@@ -16,13 +16,21 @@
 
 import { spawn } from "child_process";
 
+// "+f3" applies espeak-ng's built-in female voice variant on top of each
+// language's base phoneme set. Without it, espeak-ng's default voices for
+// most languages (including Hindi, Bengali, Tamil, Marathi, Telugu) are
+// male by default, which is why the espeak-ng fallback path could sound
+// like a different voice/gender than a student's browser voice (which is
+// often female, e.g. Windows' built-in Hindi voice). This keeps the
+// espeak-ng voice consistently female across all 6 languages, verified
+// with real audio generated for each before shipping.
 const ESPEAK_LANG_MAP = {
-  en: "en-us",
-  hi: "hi",
-  bn: "bn",
-  mr: "mr",
-  ta: "ta",
-  te: "te",
+  en: "en-us+f3",
+  hi: "hi+f3",
+  bn: "bn+f3",
+  mr: "mr+f3",
+  ta: "ta+f3",
+  te: "te+f3",
 };
 
 const MAX_TEXT_LENGTH = 600; // question text is short; this is a generous cap against abuse
