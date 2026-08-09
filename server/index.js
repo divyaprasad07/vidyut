@@ -493,6 +493,21 @@ app.get("/api/teacher/students", async (req, res) => {
   );
   res.json(withBadges);
 });
+// --- Serve the built React frontend (production only) ---
+// In dev, Vite serves the client on :5173 and proxies /api to this server.
+// In production there is no Vite dev server, so this Express server serves
+// the built client/dist folder directly. That means ONE server, ONE URL:
+// visiting the site loads the app, and /api/* still hits the routes above.
+const CLIENT_DIST = path.join(__dirname, "../client/dist");
+if (fs.existsSync(CLIENT_DIST)) {
+  app.use(express.static(CLIENT_DIST));
+  // Any request that isn't an API/uploads route and isn't a real static
+  // file falls through to index.html, so client-side routing (react-router)
+  // works on refresh/direct links like /videos or /teacher/login.
+  app.get(/^(?!\/api|\/uploads).*/, (req, res) => {
+    res.sendFile(path.join(CLIENT_DIST, "index.html"));
+  });
+}
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
