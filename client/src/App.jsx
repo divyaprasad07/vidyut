@@ -1,5 +1,6 @@
 // App.jsx
 import { Routes, Route } from "react-router-dom";
+import Landing from "./pages/Landing";
 import StudentHome from "./pages/StudentHome";
 import Quiz from "./pages/Quiz";
 import DiceChallenge from "./pages/DiceChallenge";
@@ -20,7 +21,8 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<StudentHome />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/home" element={<StudentHome />} />
         <Route path="/quiz/:topicId" element={<Quiz />} />
         <Route path="/dice" element={<DiceChallenge />} />
         <Route path="/profile" element={<Profile />} />

@@ -12,9 +12,8 @@ import { api } from "../services/api";
 import { OfflineIndicator } from "../components/OfflineIndicator";
 import { Dice3D } from "../gamification/Dice3D";
 
-const STUDENT_ID = "stu_1";
-
 export default function DiceChallenge() {
+  const STUDENT_ID = localStorage.getItem("vidyut_student_id") || "stu_1";
   const navigate = useNavigate();
   const [phase, setPhase] = useState("rolling"); // rolling -> answering -> result
   const [diceValue, setDiceValue] = useState(null);

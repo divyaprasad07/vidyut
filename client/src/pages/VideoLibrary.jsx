@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import { api } from "../services/api";
 import { OfflineIndicator } from "../components/OfflineIndicator";
 
-const STUDENT_ID = "stu_1";
 const LANGUAGE_LABELS = { en: "English", hi: "Hindi", bn: "Bengali", mr: "Marathi", ta: "Tamil", te: "Telugu" };
 
 export default function VideoLibrary() {
+  const STUDENT_ID = localStorage.getItem("vidyut_student_id") || "stu_1";
   const [student, setStudent] = useState(null);
   const [topics, setTopics] = useState([]);
   const [videos, setVideos] = useState([]);

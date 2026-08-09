@@ -434,6 +434,7 @@ async function seed() {
 
     await setDoc("students", studentId, {
       name: STUDENT_NAMES[i],
+      email: STUDENT_NAMES[i].toLowerCase().replace(/\s+/g, ".") + "@vidyut.demo",
       class: klass,
       school: "Govt. Senior Secondary School, Sector 12",
       language: pick(["en", "hi", "bn", "mr", "ta", "te"]),

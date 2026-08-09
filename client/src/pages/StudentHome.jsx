@@ -6,7 +6,6 @@ import { StreakFlame } from "../gamification/StreakFlame";
 import { Leaderboard } from "../gamification/Leaderboard";
 import { OfflineIndicator } from "../components/OfflineIndicator";
 
-const STUDENT_ID = "stu_1";
 const QUIZ_MODES = [
   { id: "mixed", label: "Mixed" },
   { id: "mcq", label: "Multiple choice" },
@@ -23,6 +22,7 @@ const VOICE_LANGUAGES = { en: "English", hi: "Hindi", bn: "Bengali", mr: "Marath
 const TOPIC_TO_VOICE_LANG = { hindi: "hi", bengali: "bn", tamil: "ta" };
 
 export default function StudentHome() {
+  const STUDENT_ID = localStorage.getItem("vidyut_student_id") || "stu_1";
   const [student, setStudent] = useState(null);
   const [topics, setTopics] = useState([]);
   const [allStudents, setAllStudents] = useState([]);

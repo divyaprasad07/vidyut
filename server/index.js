@@ -111,6 +111,20 @@ app.post("/api/tts", async (req, res) => {
 
 // ---- Student ----
 
+// Looks a student up by email so the landing page can log a student in
+// without a password (matches the "demo student list" auth level of the
+// existing teacher PIN login, not real Firebase Auth, see App.jsx note).
+app.post("/api/students/login", async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "email is required" });
+  const students = await getCollection("students");
+  const match = students.find(
+    (s) => (s.email || "").toLowerCase() === String(email).trim().toLowerCase()
+  );
+  if (!match) return res.status(404).json({ error: "No student found with that email." });
+  res.json({ studentId: match.id, name: match.name });
+});
+
 app.get("/api/students/:id", async (req, res) => {
   const student = await getDoc("students", req.params.id);
   if (!student) return res.status(404).json({ error: "not found" });
@@ -493,6 +507,7 @@ app.get("/api/teacher/students", async (req, res) => {
   );
   res.json(withBadges);
 });
+
 // --- Serve the built React frontend (production only) ---
 // In dev, Vite serves the client on :5173 and proxies /api to this server.
 // In production there is no Vite dev server, so this Express server serves

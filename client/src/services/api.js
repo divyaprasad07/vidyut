@@ -14,6 +14,8 @@ export const api = {
   health: () => request("/health"),
   topics: () => request("/topics"),
   student: (id) => request(`/students/${id}`),
+  studentLogin: (email) =>
+    request("/students/login", { method: "POST", body: JSON.stringify({ email }) }),
   badges: (id) => request(`/students/${id}/badges`),
   nextQuestion: (studentId, topic, excludeIds = [], rating = null) => {
     const params = new URLSearchParams({ studentId, topic });

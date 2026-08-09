@@ -7,7 +7,7 @@ import { useQuizIntegrity } from "../hooks/useQuizIntegrity";
 import { OfflineIndicator } from "../components/OfflineIndicator";
 import { speak, listen } from "../services/languageProvider";
 
-const STUDENT_ID = "stu_1"; // demo: single logged-in student, see App.jsx note
+
 const MODE_LABELS = { mcq: "Multiple choice", short: "Short answer", mixed: "Mixed" };
 const VOICE_LANGUAGES = { en: "English", hi: "Hindi", bn: "Bengali", mr: "Marathi", ta: "Tamil", te: "Telugu" };
 // Feature-detected once, not per-render: a browser without speech
@@ -19,6 +19,7 @@ const VOICE_LANGUAGES = { en: "English", hi: "Hindi", bn: "Bengali", mr: "Marath
 const HAS_STT = typeof window !== "undefined" && !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
 export default function Quiz() {
+  const STUDENT_ID = localStorage.getItem("vidyut_student_id") || "stu_1";
   const { topicId } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

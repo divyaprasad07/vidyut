@@ -5,10 +5,10 @@ import { Stone } from "../gamification/Stone";
 import { StreakFlame } from "../gamification/StreakFlame";
 import { OfflineIndicator } from "../components/OfflineIndicator";
 
-const STUDENT_ID = "stu_1";
 const TIER_ORDER = ["bronze", "silver", "gold", "diamond"];
 
 export default function Profile() {
+  const STUDENT_ID = localStorage.getItem("vidyut_student_id") || "stu_1";
   const [student, setStudent] = useState(null);
   const [badgeData, setBadgeData] = useState(null);
 
