@@ -1,347 +1,192 @@
-# Vidyut — local setup
+# ⚡ Vidyut
 
-Two apps: `server/` (Express + local JSON data store, swappable to real
-Firestore) and `client/` (Vite + React).
+**An adaptive, gamified, multi-language learning platform for ICSE / CBSE students**
 
-## 1. Server
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-visit-1D9E75)](#-live-deployment)
+[![Demo Video](https://img.shields.io/badge/Demo-Watch%20Video-D85A30)](#-demo-video)
+[![Made for Hackathon](https://img.shields.io/badge/Built%20for-Hackathon-534AB7)](#)
+
+<!-- Optional: replace with your team/track name -->
+Built by Team **[team name]** for **[hackathon name]**
+
+</div>
+
+---
+
+## 🔗 Quick Links
+
+| Live Deployment | Demo Video | Architecture |
+|---|---|---|
+| <!-- ADD DEPLOYED APP LINK HERE, e.g. https://vidyut.vercel.app --> | <!-- ADD DEMO VIDEO LINK HERE (YouTube/Drive) --> | [View diagram](#-architecture) |
+
+---
+
+## 📖 About the project
+
+Vidyut is a full-stack learning platform that adapts to each student's level in real time, keeps them motivated with game mechanics (streaks, badges, a daily dice challenge), and works in the students' own language — including voice input/output in English, Hindi, Bengali, Marathi, Tamil, and Telugu. It also gives teachers a live dashboard to spot who's falling behind before it becomes a problem.
+
+Built for classrooms where students are at very different levels, don't always have reliable connectivity, and are more comfortable in a regional language than in English.
+
+### Problem statement
+<!-- 1-2 lines: the specific problem your hackathon track asked you to solve -->
+
+### Our solution
+<!-- 2-3 lines summarizing your approach, if you want more than the About section above -->
+
+---
+
+## ✨ Key features
+
+- **Adaptive quizzes** — an Elo-rating engine picks each next question based on the student's current skill, per topic (`server/services/eloEngine.js`)
+- **7 subjects, 210 questions** — Mathematics, Science, English, Social Science, Hindi, Bengali, Tamil (with genuine, script-native language content, not translated)
+- **Gamification** — Bronze → Diamond mastery badges, a daily dice-roll streak challenge, and permanent Platinum badges for perfect MCQ runs
+- **Vernacular voice interaction** — read-aloud questions and mic-based answers in 6 languages, with a hybrid TTS pipeline (browser voices first, `espeak-ng` fallback so no language ever silently falls back to English)
+- **AI study helper** — a scoped doubt-solving chatbot (Groq API) that only answers academic questions and redirects anything else to a trusted adult
+- **Offline-first quiz taking** — answers queue in IndexedDB when the connection drops and sync automatically when it's back, with a visible "answers queued" indicator
+- **Quiz integrity** — tab-switch/minimize detection with a two-warning grace period before an auto-submit, flagged clearly to teachers
+- **Teacher dashboard** — class-wide proficiency trends, a subject-progress heatmap, per-student quiz history, and "at risk" / declining-activity flags
+- **Video lecture library** — multi-language lecture uploads with subtitle tracks, filterable by subject and language
+- **PWA** — installable, with an offline app-shell via service worker
+
+---
+
+## 🖼️ Screenshots
+
+<!-- Add your screenshots below. Suggested: student home, quiz screen, teacher dashboard, profile, video library -->
+
+### Frontend
+
+| Student Home | Teacher Dashboard | Student Profile |
+|---|---|---|
+| <img width="1906" height="900" alt="Image" src="https://github.com/user-attachments/assets/b3b52bde-8b13-434c-b790-8d5785a0ac5b" />
+<img width="1917" height="912" alt="Image" src="https://github.com/user-attachments/assets/90e092fa-5a12-4ac6-adf7-3758df65a5bc" />
+<img width="1900" height="917" alt="Image" src="https://github.com/user-attachments/assets/f311f7ee-82d2-43e3-b395-28b5f31b5bc7" />
+<img width="1913" height="912" alt="Image" src="https://github.com/user-attachments/assets/f0422751-0cd4-44d8-a855-c2647354cbc3" />
+<img width="1856" height="882" alt="Image" src="https://github.com/user-attachments/assets/c8ef5843-cf29-4924-a7bc-514b8e86409c" />
+<img width="1882" height="912" alt="Image" src="https://github.com/user-attachments/assets/28b96f19-9644-4617-97dc-d1f224398a80" />
+<img width="1917" height="1078" alt="Image" src="https://github.com/user-attachments/assets/898ccf2e-aab6-41df-9847-1b13f7764a94" />
+<img width="1917" height="1077" alt="Image" src="https://github.com/user-attachments/assets/4d36d473-a079-4c6f-999c-c00d92363990" />
+<img width="1917" height="1077" alt="Image" src="https://github.com/user-attachments/assets/dedc2390-3beb-4c65-9251-78e2f31a1633" />
+<img width="1917" height="1078" alt="Image" src="https://github.com/user-attachments/assets/75cb7cdd-fa14-4cf6-ac33-0186fc81bf93" />
+<img width="1907" height="911" alt="Image" src="https://github.com/user-attachments/assets/664b7f5d-b7b1-4014-a18c-538792da9b53" />
+<img width="430" height="591" alt="Image" src="https://github.com/user-attachments/assets/5acf0f39-536f-4e95-aa92-b52f01bee6b4" />
+<img width="1917" height="1078" alt="Image" src="https://github.com/user-attachments/assets/c005a305-f19a-441b-af85-8ea5f126edc0" />
+<img width="1228" height="1078" alt="Image" src="https://github.com/user-attachments/assets/1f2fb303-1a66-460b-af6b-eac1014177a8" />
+<img width="1917" height="1078" alt="Image" src="https://github.com/user-attachments/assets/9a0a315c-26bc-4d14-a08f-1fe74d7c3722" />
+<img width="1917" height="1078" alt="Image" src="https://github.com/user-attachments/assets/e515865e-a946-42ed-8f49-d9b3a30a2d62" />
+<img width="1917" height="1078" alt="Image" src="https://github.com/user-attachments/assets/6f777df0-431e-4fbd-9612-8baf445f38ec" /> |
+
+### Mobile responsive
+
+| Home | Quiz | Profile |
+|---|---|---|
+| <!-- mobile screenshot --> | <!-- mobile screenshot --> | <!-- mobile screenshot --> |
+
+---
+
+## 🏗️ Architecture
+
+![Vidyut architecture diagram](docs/vidyut-architecture.png)
+
+<!-- The diagram above is generated as vidyut-architecture.png — place it in a docs/ folder in the repo root so this link resolves. -->
+
+**Layers, top to bottom:**
+1. **Client** — React + Vite PWA (student and teacher screens, offline queue via IndexedDB + service worker)
+2. **API** — Express REST API grouped by domain (quiz/Elo, gamification, video, teacher analytics, chat/voice)
+3. **Services** — the core business logic (`server/services/*.js`): Elo engine, badge engine, streak engine, dice service, analytics, chat, TTS, translation
+4. **Data** — a swappable store: local JSON by default, or Firebase Firestore by setting `USE_FIREBASE=true` and dropping in a service account key — no other code changes needed
+5. **External integrations** — all free-tier, no paid keys required: Groq (AI chat), MyMemory (translation), `espeak-ng` (TTS fallback), and the browser's own Web Speech API (STT + native TTS)
+
+---
+
+## 🧰 Tech stack
+
+**Frontend:** React 18, Vite, React Router, Tailwind CSS, Recharts, `idb` (IndexedDB), `vite-plugin-pwa`
+**Backend:** Node.js, Express, Multer (file uploads), CORS
+**Data:** Local JSON store (default) or Firebase Firestore (`firebase-admin`)
+**Voice/AI:** Groq API (chat), `espeak-ng` (TTS), MyMemory API (translation), Web Speech API (browser STT/TTS)
+
+---
+
+## 📂 Project structure
 
 ```
+vidyut/
+├── client/                      # React + Vite PWA
+│   └── src/
+│       ├── pages/                # StudentHome, Quiz, Profile, VideoLibrary, TeacherDashboard, ...
+│       ├── dashboard/             # Teacher analytics widgets (charts, heatmap, tables)
+│       ├── gamification/          # Dice3D, Leaderboard, Stone (badges), StreakFlame
+│       ├── services/              # api client, offline queue, language providers
+│       └── hooks/                 # useOfflineQueue, useQuizIntegrity
+└── server/                      # Express API
+    ├── index.js                  # routes
+    ├── services/                  # eloEngine, badgeEngine, streakEngine, diceService,
+    │                               # analytics, chatService, ttsService, translateService, db
+    ├── scripts/                   # seedData.js, testElo.js
+    └── data/                      # local JSON store (generated by npm run seed)
+```
+
+---
+
+## 🚀 Getting started
+
+### 1. Server
+
+```bash
 cd server
 npm install
-npm run seed      # generates 20 students, 5 topics, 50 questions into server/data/db.json
-npm start         # listens on :4000
+npm run seed      # generates demo students, topics, and 210 questions
+npm start          # runs on :4000
 ```
 
-Quick sanity check once it's running: `curl localhost:4000/api/health`
-should return `{"ok":true,"dbMode":"local-json"}`.
+Check it's running: `curl localhost:4000/api/health` → `{"ok":true,"dbMode":"local-json"}`
+Teacher demo login PIN: `1234`
 
-Teacher PIN for the demo teacher account: `1234`.
-
-For the voice-output feature (section 6 below) to actually speak, you'll
-also need `espeak-ng` installed, see section 6 for the one-time Windows
-install step. Everything else works without it.
-
-To point at real Firebase Firestore instead of the local JSON file: drop a
-service account key at `server/serviceAccount.json`, then run with
-`USE_FIREBASE=true npm start`. Nothing else needs to change, see the
-comments at the top of `server/services/db.js`.
-
-## 2. Client
-
-In a second terminal:
-
+Optional `.env` in `server/` for the AI study helper:
 ```
+GROQ_API_KEY=your_key_here
+```
+
+### 2. Client
+
+```bash
 cd client
 npm install
-npm run dev        # Vite dev server on :5173, proxies /api to :4000
+npm run dev         # runs on :5173, proxies /api to :4000
 ```
 
-Open `http://localhost:5173`. The student home screen loads as `stu_1`
-(Aarav Sharma), hardcoded for the demo, see the note at the top of
-`client/src/App.jsx` for how to swap in real Firebase Auth.
+Open `http://localhost:5173`. Teacher dashboard: `http://localhost:5173/teacher/login` (PIN `1234`).
 
-Teacher dashboard: `http://localhost:5173/teacher/login`, PIN `1234`.
+### 3. Switching to Firebase (optional)
 
-## 3. Things worth testing by hand that I couldn't verify in a sandboxed
-   environment without a real browser:
+Drop a service account key at `server/serviceAccount.json`, then:
+```bash
+USE_FIREBASE=true npm start
+```
 
-- **Offline quiz taking**: start a quiz, then use devtools' Network tab to
-  go offline mid-quiz, keep answering, confirm the "Offline, X answers
-  queued" indicator appears, then go back online and confirm it syncs and
-  the rating updates.
-- **Quiz integrity**: start a quiz, switch to another browser tab (or
-  minimize the window), then come back. You should see a warning modal
-  ("Warning 1 of 2") rather than an immediate submit, since leaving the
-  screen can easily happen by accident (a notification, a misclick, a
-  network hiccup). Dismiss it and do it again, you should see "Warning 2
-  of 2". Do it a third time and NOW it auto-submits with whatever was
-  answered so far, and the results screen explains that two warnings
-  were given first. The teacher dashboard's per-student quiz history
-  should show that attempt flagged as auto-submitted. I could not
-  trigger real browser tab-switch/PiP events from this sandbox, so the
-  warning-counting logic was verified in isolation (2 warnings, submit
-  on the 3rd, correctly ignores anything after) but the actual UI has
-  not been seen firing in a real browser, that's the one thing to watch
-  closely here.
-- **PWA install**: confirm the browser offers to install the app, and
-  that a second load works with the network fully disabled (app shell
-  should still render from the service worker cache).
+---
 
-## 4. Video lectures
+## 🎥 Demo video
 
-Student side: click the video icon (top right, next to the profile avatar)
-or go to `http://localhost:5173/videos`. Filter by subject and language.
+<!-- ADD DEMO VIDEO LINK HERE -->
 
-Teacher side: on the dashboard, the "Video lecture library" section has a
-real upload form (file picker + title/subject/class/chapter/language) that
-uploads to `server/uploads/` and appears in the library immediately.
+## 🌐 Live deployment
 
-The seed data includes 6 sample lecture clips already, covering all 6
-languages (en/hi/bn/mr/ta/te), so the library isn't empty on first load.
-Honest limitation: those 6 clips are short synthesized placeholder footage
-(a color-bar test pattern with an on-screen label), not real recorded
-lectures, since this environment can't produce actual teaching video. The
-metadata around them (titles, subjects, classes, chapters, teacher name)
-is real. They're shipped pre-rendered in `server/uploads/seed/` in this
-zip, so `npm run seed` does not need `ffmpeg` installed to work, it only
-tries to generate them if those files are missing, and skips gracefully
-(with a console warning) if `ffmpeg` isn't on your machine.
+<!-- ADD DEPLOYED APP LINK HERE -->
 
-## 5. Quiz question style
+---
 
-On the home screen, above "Start adaptive quiz", there's a "Question
-style" picker: Multiple choice, Short answer, or Mixed (default). Mixed
-randomly varies per question within one quiz. Every question in the seed
-data has 4 MCQ options generated alongside its free-text answer, so all
-three modes work on the same question bank; scoring is the same
-case-insensitive match either way.
+## ⚠️ Known limitations
 
-### Subjects
+- Single hardcoded demo student; no real Firebase Auth login screen yet
+- Voice output needs `espeak-ng` installed locally for the server-side fallback path
+- MCQ distractors are auto-generated, not hand-curated
+- AI study helper's "academic questions only" scope is a prompt-level instruction, not a hard technical restriction
 
-7 subjects total: Mathematics, Science, English, Social Science, Hindi,
-Bengali, and Tamil (30 questions each, 210 total). The three language
-subjects (Hindi, Bengali, Tamil) are genuine grammar and vocabulary
-questions written in that language's own script (synonyms, antonyms,
-sentence structure, idioms), not translated content. **Worth flagging
-honestly**: the Bengali and Tamil content was written carefully using
-standard textbook-level examples, but I'm not a certified speaker of
-either language, so I'd genuinely recommend having a Bengali and Tamil
-teacher spot-check it before relying on it with real students, same
-caution I'd give for any language content outside what I can verify with
-full confidence.
+---
 
-Picking Hindi, Bengali, or Tamil as the subject on the home screen also
-auto-switches the "Voice language" picker to match, so the read-aloud
-and voice-answer features just work in that language without an extra
-manual step, you can still override it back to something else if you
-want.
+## 📄 License
 
-## 6. Vernacular voice interaction
+MIT License
 
-There's a "Voice language" picker on the home screen (English, Hindi,
-Bengali, Marathi, Tamil, Telugu), carried into the quiz. On each question,
-a speaker button reads it aloud, and short-answer mode has a mic button
-that fills the text box from speech.
-
-**Speech output (speak) prefers your browser's own voice, falls back to
-`espeak-ng` on the server.** This evolved in two steps, worth knowing
-both: originally the browser's own speechSynthesis silently fell back to
-whatever English voice was installed when a language had no voice pack
-on that machine, with no error, so selecting Hindi could just quietly
-speak English. The fix was routing everything through `espeak-ng`
-instead, which ships its own voice data for all 6 languages so it never
-depends on what's installed locally, completely free, no API key. That
-made it reliable, but every language then sounded the same fairly
-robotic way, `espeak-ng`'s Indic-language voices use a basic phoneme
-model that can sound more like an English speaker's approximation than
-a native voice.
-
-The current behavior (`hybrid` provider,
-`client/src/services/languageProvider/hybridProvider.js`) tries to get
-the best of both: before speaking, it checks the browser's actual
-installed voice list for a genuine match (not just "some voice exists"),
-and uses that if found, since browsers like Edge often ship much more
-natural cloud-backed voices for Hindi and other Indian languages. Only
-when no real match exists does it fall back to `espeak-ng`. This
-preserves the original fix (it can't silently end up speaking English
-for a language it doesn't have, because it's checking the real voice
-list first, not just assuming one), while sounding noticeably better
-whenever your machine happens to have a good voice installed. **Whether
-you actually get the better voice depends on what's on your Windows
-machine** — if Hindi still sounds robotic after this update, check
-Windows Settings > Time & Language > Language & region, and see if
-adding the Hindi (or other) language pack installs a matching voice;
-that's outside anything this app controls.
-
-### This needs one manual install step on your machine (for the espeak-ng fallback)
-
-`espeak-ng` is not bundled with Node, you need it installed separately
-so the fallback path works even where your browser has no matching
-voice:
-
-1. Download the Windows installer from
-   https://github.com/espeak-ng/espeak-ng/releases (the latest release's
-   `.msi` file, e.g. `espeak-ng-X.X.X.msi`).
-2. Run it (default options are fine).
-3. **Close and reopen your server terminal** (PATH changes need a fresh
-   terminal), then run `espeak-ng --version` to confirm it's found.
-4. Restart the server (`npm start`).
-
-If you skip this, the app doesn't break, the speaker button will show
-"Voice output isn't available right now" for any language your browser
-also can't speak natively, since the server checks and reports failure
-rather than crashing. But you do need this step for full reliability
-across all 6 languages.
-
-**Speech input (mic/listen) is unchanged**, still the browser's own
-SpeechRecognition, since there's no free no-API-key server-side
-alternative worth building here. That part only needs your browser to
-support it (Chrome/Edge do), nothing to install.
-
-Other things worth knowing:
-- **The voice reads whatever text is stored**, it doesn't translate.
-  Selecting Hindi voice on a Math question (whose text is stored in
-  English) will pronounce the English text with a Hindi accent, not
-  translate it. It sounds right and natural only for the Hindi-topic
-  questions, which are genuinely authored in Hindi. Real per-question
-  translation into all 6 languages is a content task, not built here,
-  see the `translations: { en, hi, ... }` field already on each question
-  in `seedData.js` if you want to fill that in later.
-- To go back to pure browser TTS instead of the server, set
-  `VITE_LANGUAGE_PROVIDER=webspeech` in the client's environment. A
-  Bhashini option is still scaffolded (`VITE_LANGUAGE_PROVIDER=bhashini`)
-  for if you get an official API key later, but it's unfinished, see
-  `client/src/services/languageProvider/bhashiniProvider.js`.
-
-## 7. Answer review
-
-At the end of a quiz (or after an early auto-submit), the results screen
-shows a full breakdown: every question, whether you got it right or
-wrong, your submitted answer, and the correct answer for anything you
-missed. This is a deliberate choice over showing correctness after each
-question, since revealing the correct answer mid-quiz would mean sending
-it to the browser before the quiz is over, which undermines the
-quiz-integrity design (the correct answer is deliberately stripped from
-every question payload until scoring happens server-side). If your
-attempt gets queued offline, the review isn't available until it syncs,
-since it comes back as part of the server's scoring response.
-
-## 8. Quiz-integrity warnings
-
-Leaving the quiz screen (switching tabs, minimizing) no longer
-auto-submits immediately. The first two times, you get a clearly visible
-warning modal explaining what happened and how many chances remain,
-since this can easily happen by accident (a notification, a misclick, a
-brief network hiccup). Only the **third** occurrence actually
-auto-submits, and the results screen explains that two warnings were
-given first. I could not trigger real browser tab-switch/PiP events from
-the build sandbox, so the warning-counting logic itself was verified in
-isolation, but the actual modal has not been seen firing in a real
-browser, test this by switching tabs three times and confirming it warns
-twice then submits on the third.
-
-## 9. AI study helper (chat)
-
-A small floating chat button (bottom-right) on the student-facing
-screens, for academic doubts, "explain how photosynthesis works,"
-"why does 2x + 5 = 15 mean x = 5," across all 7 subjects. Kept
-deliberately light: no chat history is saved anywhere, no new database
-collection, the conversation lives only in the browser tab and clears on
-reload. Uses Groq's free-tier chat API.
-
-**Hidden on purpose** during an active quiz (`/quiz/*`) and on the
-teacher dashboard, an always-available "ask AI" button during a quiz
-would be a direct way to get answers, which would defeat the
-quiz-integrity system elsewhere in this app.
-
-### Setup (one-time)
-
-1. Go to https://console.groq.com, sign up (free), and create an API key.
-2. In `server/`, create a file named `.env` (if it doesn't exist) with:
-   ```
-   GROQ_API_KEY=your_key_here
-   ```
-3. Restart the server.
-
-If you skip this, the app doesn't break, students just see "The study
-helper isn't set up yet" if they try to use it, since the server checks
-and reports this rather than crashing.
-
-**Scope, not just capability**: the assistant is instructed (via a
-system prompt) to only help with schoolwork, and to gently redirect to a
-teacher or trusted adult rather than attempt to counsel a student who
-seems distressed. This is a prompt-level instruction, not a hard
-technical guarantee, worth knowing if you plan to rely on it for
-anything beyond a demo.
-
-### Voice: ask in your language, listen back in your language
-
-The chat panel has a language picker (English, Hindi, Bengali, Marathi,
-Tamil, Telugu). The mic button next to the input transcribes your
-spoken question into that language and fills the text box (it doesn't
-auto-send, so you can check/edit a misheard transcript first). The
-assistant's text replies are always in English (enforced in the system
-prompt), but every reply has a small speaker icon, click it and it
-translates that reply into whichever language the picker is set to and
-reads it aloud, so you can ask in Hindi and listen back in Hindi even
-though the words on screen stay English.
-
-This reuses the same `espeak-ng` text-to-speech and browser speech
-recognition already set up for the quiz's voice feature (section 6), so
-if that's working there, it'll work here too, no extra setup for those
-two pieces. Translation is new here though, the quiz's voice feature
-deliberately does not translate (see section 6), but this chat feature
-does, since an English-only chat would defeat the point of asking in
-your own language. It uses the free MyMemory API for that translation
-step. **This could not be tested from the build sandbox**, since that
-domain isn't reachable from here, so speaking a reply back in a
-non-English language is a genuine first real-world test. If translation
-fails, it falls back to speaking the original English text rather than
-staying silent.
-
-## 10. Platinum badges
-
-Every time a student answers all questions correctly on an 8+ question
-quiz taken in **Multiple choice** mode specifically (not Short answer or
-Mixed), they earn a Platinum badge. Unlike the bronze/silver/gold/diamond
-mastery tiers (which reflect current rating and can be lost if a
-student's rating drops), Platinum badges are permanent, one per
-qualifying attempt, so a student can rack up any number over time. The
-count shows as a small white/silver badge right next to the student's
-name on the home screen.
-
-No new database collection needed for this, it's computed by counting
-existing quiz attempts that match the criteria
-(`server/services/analytics.js`, `getPlatinumBadgeCount`), the same
-pattern the rest of the app's derived stats use.
-
-**Worth confirming your intent matches mine**: "in an mcq" was
-interpreted literally, as in, the quiz mode picker on the home screen was
-set to "Multiple choice" specifically when the quiz was taken. A perfect
-score in Short answer or Mixed mode does not earn one. Verified this
-distinction directly: a perfect MCQ-mode quiz correctly awarded a badge,
-an immediately following perfect Short-answer-mode quiz correctly did
-not, and a second perfect MCQ quiz correctly brought the count to 2. If
-you actually meant "any quiz mode, doesn't have to be pure MCQ," let me
-know and it's a one-line change (drop the `quizMode === "mcq"` check in
-`getPlatinumBadgeCount`).
-
-## 11. Daily dice streak challenge
-
-The home screen now has a "Roll the dice" card, separate from regular
-topic quizzes on purpose. Rolling picks a random number 1-6 (with a
-short tumble animation before it settles), that many random questions
-from across every subject appear (no adaptive difficulty, this isn't
-about mastery), and getting at least 50% right secures that day's
-streak. Falling short offers a retry with fresh questions, same dice
-value, as many times as needed in one day.
-
-**This is a genuine behavior change, not just an addition**: regular
-topic quizzes used to keep the streak alive on their own; now only a
-passed dice challenge does. A student who only ever does topic quizzes
-and never touches the dice will see their streak stay at 0, that's
-intentional per what was asked for, but worth knowing since it changes
-what the streak flame on the home screen actually measures.
-
-**Leaderboard-neutral by construction, not just by convention**: the
-dice challenge's routes (`server/services/diceService.js`) never call
-into the Elo rating logic or write to the `attempts` collection at all,
-they write to a separate `dice_challenges` collection instead. Verified
-this directly, not just assumed it: ran a full roll, fail, retry, pass
-cycle and confirmed the student's topic ratings and their entry count in
-the `attempts` collection were byte-for-byte unchanged afterward.
-
-## 12. Known simplifications (see the honest status write-up in chat)
-
-- Data store is local JSON, not live Firestore, until you provide a
-  service account key.
-- Single hardcoded demo student, no real Firebase Auth login screen yet.
-- Vernacular voice UI exists (see section 6 above); speech output needs
-  `espeak-ng` installed on your machine (one-time setup, see section 6),
-  speech input uses your browser's built-in speech recognition.
-- MCQ distractors are auto-generated (nearby numbers for numeric answers,
-  other real answers from the same topic for text answers), not
-  hand-curated, so occasionally one option looks obviously out of place.
-- The AI study helper (section 9) needs a free Groq API key to actually
-  respond, and its "academic questions only" scope is a prompt-level
-  instruction, not a hard technical restriction.
