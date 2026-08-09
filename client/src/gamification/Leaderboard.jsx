@@ -21,14 +21,14 @@ export function Leaderboard({ entries, currentStudentClass, currentStudentId, to
   }, [entries, scope, currentStudentClass]);
 
   return (
-    <div className="bg-dusk rounded-2xl p-4 w-full max-w-md">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-display text-paper text-lg">{topicName} leaderboard</h3>
-        <div className="flex bg-night rounded-full p-1 text-xs font-body">
+    <div className="glass-card rounded-[32px] p-6 w-full shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-display text-slate-800 text-lg font-bold">{topicName} rank</h3>
+        <div className="flex bg-white/60 rounded-full p-1 text-xs font-body">
           <button
             onClick={() => setScope("class")}
             className={`px-3 py-1 rounded-full transition ${
-              scope === "class" ? "bg-flame text-night font-semibold" : "text-slate-400"
+              scope === "class" ? "bg-[#008080] text-white font-semibold" : "text-slate-500"
             }`}
           >
             My class
@@ -36,7 +36,7 @@ export function Leaderboard({ entries, currentStudentClass, currentStudentId, to
           <button
             onClick={() => setScope("global")}
             className={`px-3 py-1 rounded-full transition ${
-              scope === "global" ? "bg-flame text-night font-semibold" : "text-slate-400"
+              scope === "global" ? "bg-[#008080] text-white font-semibold" : "text-slate-500"
             }`}
           >
             School-wide
@@ -49,18 +49,18 @@ export function Leaderboard({ entries, currentStudentClass, currentStudentId, to
           return (
             <li
               key={e.studentId}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 ${
-                isMe ? "bg-flame/20 ring-1 ring-flame" : ""
+              className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 transition ${
+                isMe ? "bg-[#E0F2F2] border border-[#008080]/20" : "hover:bg-white/60"
               }`}
             >
-              <span className="font-mono text-sm w-6 text-slate-400">{i + 1}</span>
-              <span className={`font-body flex-1 truncate ${isMe ? "text-flame font-semibold" : "text-paper"}`}>
+              <span className="font-mono text-sm w-6 text-center text-slate-400 font-bold">{i + 1}</span>
+              <span className={`font-body flex-1 truncate ${isMe ? "text-[#008080] font-bold" : "text-slate-700 font-medium"}`}>
                 {e.studentName}
                 {isMe && " (you)"}
               </span>
               {e.platinumBadges > 0 && (
                 <span
-                  className="inline-flex items-center gap-0.5 bg-gradient-to-br from-white to-slate-300 text-night text-[10px] font-display font-bold px-1.5 py-0.5 rounded-full shrink-0"
+                  className="inline-flex items-center gap-0.5 bg-gradient-to-br from-white to-slate-300 text-slate-700 text-[10px] font-display font-bold px-1.5 py-0.5 rounded-full shrink-0 border border-slate-200"
                   title={`${e.platinumBadges} Platinum Badge${e.platinumBadges === 1 ? "" : "s"}`}
                 >
                   <svg width="8" height="8" viewBox="0 0 24 24" fill="none">
@@ -69,12 +69,12 @@ export function Leaderboard({ entries, currentStudentClass, currentStudentId, to
                   {e.platinumBadges}
                 </span>
               )}
-              <span className="font-mono text-sm text-teal">{e.rating}</span>
+              <span className="font-mono text-sm text-[#008080] font-bold">{e.rating}</span>
             </li>
           );
         })}
         {filtered.length === 0 && (
-          <li className="text-slate-500 text-sm font-body py-2">
+          <li className="text-slate-400 text-sm font-body py-2 text-center">
             No attempts on this topic yet in this view. Be the first.
           </li>
         )}

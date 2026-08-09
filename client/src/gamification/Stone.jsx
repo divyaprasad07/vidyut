@@ -56,12 +56,12 @@ export function Stone({ tier = "bronze", size = 88, earned = true, label, flavor
         <polyline points="10,52 50,45 90,52" stroke={earned ? dark : "#3D4A6B"} strokeWidth="1" opacity="0.5" />
       </svg>
       {label && (
-        <span className={`font-display text-sm text-center ${earned ? "text-paper" : "text-slate-500"}`}>
+        <span className={`font-display text-sm text-center ${earned ? "text-slate-800" : "text-slate-400"}`}>
           {label}
         </span>
       )}
       {flavor && earned && (
-        <span className="font-body text-xs text-center text-slate-300 max-w-[10rem]">{flavor}</span>
+        <span className="font-body text-xs text-center text-slate-500 max-w-[10rem]">{flavor}</span>
       )}
     </div>
   );

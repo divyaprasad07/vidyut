@@ -125,6 +125,44 @@ app.post("/api/students/login", async (req, res) => {
   res.json({ studentId: match.id, name: match.name });
 });
 
+const VALID_CLASSES = ["6A", "6B", "7A", "7B", "8A", "8B"];
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Real signup, not limited to the 20 seeded demo accounts: a genuinely
+// new name/email/class creates a brand-new student record (default
+// rating 1000 on every topic, 0 streak, no history), same shape as any
+// seeded student. If the email already exists, this logs that existing
+// student in instead of erroring, so accidentally submitting the signup
+// form twice doesn't create a duplicate account or a confusing error.
+app.post("/api/students/signup", async (req, res) => {
+  const { name, email, class: klass } = req.body;
+  if (!name || !name.trim()) return res.status(400).json({ error: "name is required" });
+  if (!email || !EMAIL_PATTERN.test(String(email).trim())) {
+    return res.status(400).json({ error: "a valid email is required" });
+  }
+  if (!VALID_CLASSES.includes(klass)) {
+    return res.status(400).json({ error: "please select a valid class" });
+  }
+
+  const normalizedEmail = String(email).trim().toLowerCase();
+  const students = await getCollection("students");
+  const existing = students.find((s) => (s.email || "").toLowerCase() === normalizedEmail);
+  if (existing) {
+    return res.json({ studentId: existing.id, name: existing.name, alreadyExisted: true });
+  }
+
+  const id = await addDoc("students", {
+    name: name.trim(),
+    email: normalizedEmail,
+    class: klass,
+    school: "",
+    language: "en",
+    ratings: {},
+    lastActive: null,
+  });
+  res.json({ studentId: id, name: name.trim(), alreadyExisted: false });
+});
+
 app.get("/api/students/:id", async (req, res) => {
   const student = await getDoc("students", req.params.id);
   if (!student) return res.status(404).json({ error: "not found" });
@@ -137,6 +175,30 @@ app.get("/api/students/:id", async (req, res) => {
   const streak = computeStreak(streakDates);
   const platinumBadges = await getPlatinumBadgeCount(req.params.id);
   res.json({ ...student, streak, platinumBadges });
+});
+
+// Real per-day time-spent-learning for the last 7 days, used for the
+// student home "Learning Momentum" chart. Computed from actual quiz
+// attempt timestamps and timeTakenSec, nothing fabricated here. Dice
+// challenge attempts don't currently record time-taken, so they're not
+// included, this only reflects regular topic quizzes for now.
+app.get("/api/students/:id/momentum", async (req, res) => {
+  const quizAttempts = await getStudentQuizHistory(req.params.id);
+
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    days.push(d.toISOString().slice(0, 10));
+  }
+
+  const minutesByDay = Object.fromEntries(days.map((d) => [d, 0]));
+  for (const a of quizAttempts) {
+    const day = new Date(a.timestamp).toISOString().slice(0, 10);
+    if (day in minutesByDay) minutesByDay[day] += (a.timeTakenSec || 0) / 60;
+  }
+
+  res.json(days.map((d) => ({ day: d, minutes: Math.round(minutesByDay[d]) })));
 });
 
 app.get("/api/students/:id/badges", async (req, res) => {
@@ -506,6 +568,56 @@ app.get("/api/teacher/students", async (req, res) => {
     }))
   );
   res.json(withBadges);
+});
+
+// Real, computed class-wide metrics for the teacher dashboard header
+// (average mastery, students active today, questions solved in the last
+// 7 days, and a decline-based risk label). Optionally scoped to one
+// class via ?class=. Every number here is derived from actual student
+// ratings and attempt timestamps, none of it is a placeholder.
+app.get("/api/teacher/overview", async (req, res) => {
+  const { class: klass } = req.query;
+  const allStudents = await getCollection("students");
+  const students = klass ? allStudents.filter((s) => s.class === klass) : allStudents;
+  const studentIds = new Set(students.map((s) => s.id));
+
+  const allAttempts = await getCollection("attempts");
+  const attempts = allAttempts.filter((a) => studentIds.has(a.studentId));
+
+  const masteryValues = students.flatMap((s) =>
+    Object.values(s.ratings || {}).map((r) => masteryPercent(r.rating))
+  );
+  const avgMastery = masteryValues.length
+    ? Math.round(masteryValues.reduce((a, b) => a + b, 0) / masteryValues.length)
+    : 0;
+
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const activeToday = new Set(
+    attempts
+      .filter((a) => new Date(a.timestamp).toISOString().slice(0, 10) === todayKey)
+      .map((a) => a.studentId)
+  ).size;
+
+  const weekAgo = Date.now() - 7 * 86400000;
+  const questionsSolvedThisWeek = attempts
+    .filter((a) => new Date(a.timestamp).getTime() >= weekAgo)
+    .reduce((sum, a) => sum + (a.questionsAttempted || 0), 0);
+
+  const declining = await getDecliningActivity(7);
+  const decliningInScope = klass
+    ? declining.filter((d) => studentIds.has(d.studentId))
+    : declining;
+  const riskLevel =
+    decliningInScope.length === 0 ? "LOW" : decliningInScope.length <= 2 ? "MEDIUM" : "HIGH";
+
+  res.json({
+    totalStudents: students.length,
+    avgMastery,
+    activeToday,
+    questionsSolvedThisWeek,
+    decliningCount: decliningInScope.length,
+    riskLevel,
+  });
 });
 
 // --- Serve the built React frontend (production only) ---

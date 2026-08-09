@@ -1,6 +1,6 @@
 // App.jsx
-import { Routes, Route } from "react-router-dom";
-import Landing from "./pages/Landing";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Landing, { STUDENT_ID_KEY } from "./pages/Landing";
 import StudentHome from "./pages/StudentHome";
 import Quiz from "./pages/Quiz";
 import DiceChallenge from "./pages/DiceChallenge";
@@ -10,23 +10,29 @@ import AdminLogin from "./pages/AdminLogin";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import { ChatWidget } from "./components/ChatWidget";
 
-// Demo note: student auth is a single hardcoded student (stu_1) throughout
-// the client (see STUDENT_ID constants in each page) rather than a full
-// Firebase Auth login screen, since that's the piece that genuinely needs
-// a real browser + Firebase project to verify, and the brief's confirmed
-// priority is Tier 1 logic being demo-solid over every screen having live
-// auth. Swapping in real Firebase Auth here is a contained change: read
-// the signed-in uid instead of the STUDENT_ID constant.
+// Every student page reads its identity from localStorage (see
+// STUDENT_ID_KEY in Landing.jsx), set by a real login or signup on the
+// landing page. This guard is what actually enforces that: without it, a
+// student page opened directly (no stored identity yet) would silently
+// fall back to the seeded demo student, exactly the "always enters as
+// Aarav Sharma" problem the login/signup flow exists to fix. With it, no
+// stored identity means straight back to the landing page to log in or
+// sign up first.
+function RequireStudent({ children }) {
+  const hasStudent = !!localStorage.getItem(STUDENT_ID_KEY);
+  return hasStudent ? children : <Navigate to="/" replace />;
+}
+
 export default function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/home" element={<StudentHome />} />
-        <Route path="/quiz/:topicId" element={<Quiz />} />
-        <Route path="/dice" element={<DiceChallenge />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/videos" element={<VideoLibrary />} />
+        <Route path="/home" element={<RequireStudent><StudentHome /></RequireStudent>} />
+        <Route path="/quiz/:topicId" element={<RequireStudent><Quiz /></RequireStudent>} />
+        <Route path="/dice" element={<RequireStudent><DiceChallenge /></RequireStudent>} />
+        <Route path="/profile" element={<RequireStudent><Profile /></RequireStudent>} />
+        <Route path="/videos" element={<RequireStudent><VideoLibrary /></RequireStudent>} />
         <Route path="/teacher/login" element={<AdminLogin />} />
         <Route path="/teacher" element={<TeacherDashboard />} />
       </Routes>

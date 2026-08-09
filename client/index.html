@@ -9,8 +9,19 @@
       href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Noto+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
       rel="stylesheet"
     />
+    <!-- FontAwesome (CSS-only, no kit/account dependency) used by the
+         redesigned student/teacher screens -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
-  <body class="bg-night">
+  <body>
+    <!-- No fixed background here anymore: some pages are now light
+         (student home/profile) and some dark (quiz, dice, teacher
+         dashboard), each page's own root element sets its own
+         background, a body-level default caused a wrong-color flash on
+         the light pages before React mounted. -->
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

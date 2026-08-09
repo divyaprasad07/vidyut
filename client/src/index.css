@@ -23,3 +23,50 @@ body {
   outline: 3px solid #8FE3FF;
   outline-offset: 2px;
 }
+
+/* ---- Redesigned student pages (home, profile): sky/glassmorphic theme ---- */
+.sky-gradient {
+  background: linear-gradient(180deg, #BAE6FD 0%, #F0F9FF 100%);
+}
+.glass-card {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.streak-container {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.flame-glow {
+  filter: drop-shadow(0 0 12px rgba(255, 191, 0, 0.75));
+  animation: flicker 1.5s infinite alternate;
+}
+@keyframes flicker {
+  0% { transform: scale(1); opacity: 0.92; }
+  100% { transform: scale(1.12); opacity: 1; }
+}
+.cloud {
+  position: absolute;
+  background: white;
+  border-radius: 100px;
+  opacity: 0.2;
+  filter: blur(40px);
+  animation: drift linear infinite;
+}
+@keyframes drift {
+  from { transform: translateX(-200px); }
+  to { transform: translateX(calc(100vw + 200px)); }
+}
+
+/* ---- Redesigned teacher dashboard: blackboard/chalk theme ---- */
+.blackboard-bg {
+  background-color: #1B2420;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, transparent 1px, transparent 2px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.015) 0px, transparent 1px, transparent 2px);
+}
+.chalk-box {
+  border: 1px solid rgba(245, 245, 245, 0.15);
+  border-radius: 4px;
+}

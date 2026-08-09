@@ -16,6 +16,8 @@ export const api = {
   student: (id) => request(`/students/${id}`),
   studentLogin: (email) =>
     request("/students/login", { method: "POST", body: JSON.stringify({ email }) }),
+  studentSignup: (name, email, klass) =>
+    request("/students/signup", { method: "POST", body: JSON.stringify({ name, email, class: klass }) }),
   badges: (id) => request(`/students/${id}/badges`),
   nextQuestion: (studentId, topic, excludeIds = [], rating = null) => {
     const params = new URLSearchParams({ studentId, topic });
@@ -95,4 +97,6 @@ export const api = {
   },
   diceSubmit: (studentId, answers) =>
     request("/dice/submit", { method: "POST", body: JSON.stringify({ studentId, answers }) }),
+  momentum: (studentId) => request(`/students/${studentId}/momentum`),
+  teacherOverview: (klass) => request(`/teacher/overview${klass ? `?class=${klass}` : ""}`),
 };
