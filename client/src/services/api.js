@@ -83,4 +83,14 @@ export const api = {
   chatStatus: () => request("/chat/status"),
   translate: (text, targetLang, sourceLang = "en") =>
     request("/translate", { method: "POST", body: JSON.stringify({ text, targetLang, sourceLang }) }),
+  diceStatus: (studentId) => request(`/dice/status?studentId=${studentId}`),
+  diceRoll: (studentId) =>
+    request("/dice/roll", { method: "POST", body: JSON.stringify({ studentId }) }),
+  diceQuestions: (count, excludeIds = []) => {
+    const params = new URLSearchParams({ count });
+    if (excludeIds.length) params.set("exclude", excludeIds.join(","));
+    return request(`/dice/questions?${params.toString()}`);
+  },
+  diceSubmit: (studentId, answers) =>
+    request("/dice/submit", { method: "POST", body: JSON.stringify({ studentId, answers }) }),
 };

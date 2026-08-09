@@ -2,6 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 import StudentHome from "./pages/StudentHome";
 import Quiz from "./pages/Quiz";
+import DiceChallenge from "./pages/DiceChallenge";
 import Profile from "./pages/Profile";
 import VideoLibrary from "./pages/VideoLibrary";
 import AdminLogin from "./pages/AdminLogin";
@@ -21,6 +22,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<StudentHome />} />
         <Route path="/quiz/:topicId" element={<Quiz />} />
+        <Route path="/dice" element={<DiceChallenge />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/videos" element={<VideoLibrary />} />
         <Route path="/teacher/login" element={<AdminLogin />} />

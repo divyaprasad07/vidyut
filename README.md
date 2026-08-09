@@ -306,7 +306,32 @@ you actually meant "any quiz mode, doesn't have to be pure MCQ," let me
 know and it's a one-line change (drop the `quizMode === "mcq"` check in
 `getPlatinumBadgeCount`).
 
-## 11. Known simplifications (see the honest status write-up in chat)
+## 11. Daily dice streak challenge
+
+The home screen now has a "Roll the dice" card, separate from regular
+topic quizzes on purpose. Rolling picks a random number 1-6 (with a
+short tumble animation before it settles), that many random questions
+from across every subject appear (no adaptive difficulty, this isn't
+about mastery), and getting at least 50% right secures that day's
+streak. Falling short offers a retry with fresh questions, same dice
+value, as many times as needed in one day.
+
+**This is a genuine behavior change, not just an addition**: regular
+topic quizzes used to keep the streak alive on their own; now only a
+passed dice challenge does. A student who only ever does topic quizzes
+and never touches the dice will see their streak stay at 0, that's
+intentional per what was asked for, but worth knowing since it changes
+what the streak flame on the home screen actually measures.
+
+**Leaderboard-neutral by construction, not just by convention**: the
+dice challenge's routes (`server/services/diceService.js`) never call
+into the Elo rating logic or write to the `attempts` collection at all,
+they write to a separate `dice_challenges` collection instead. Verified
+this directly, not just assumed it: ran a full roll, fail, retry, pass
+cycle and confirmed the student's topic ratings and their entry count in
+the `attempts` collection were byte-for-byte unchanged afterward.
+
+## 12. Known simplifications (see the honest status write-up in chat)
 
 - Data store is local JSON, not live Firestore, until you provide a
   service account key.

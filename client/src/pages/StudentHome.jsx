@@ -26,6 +26,7 @@ export default function StudentHome() {
   const [student, setStudent] = useState(null);
   const [topics, setTopics] = useState([]);
   const [allStudents, setAllStudents] = useState([]);
+  const [diceChallenge, setDiceChallenge] = useState(null); // null = not rolled today yet
   const [activeTopic, setActiveTopic] = useState("math");
   const [quizMode, setQuizMode] = useState("mixed");
   const [voiceLang, setVoiceLang] = useState("en");
@@ -34,6 +35,7 @@ export default function StudentHome() {
     api.student(STUDENT_ID).then(setStudent);
     api.topics().then(setTopics);
     api.allStudents().then(setAllStudents);
+    api.diceStatus(STUDENT_ID).then((r) => setDiceChallenge(r.challenge));
   }, []);
 
   const selectTopic = (topicId) => {
@@ -50,6 +52,7 @@ export default function StudentHome() {
     studentName: s.name,
     class: s.class,
     rating: s.ratings?.[activeTopic]?.rating ?? 1000,
+    platinumBadges: s.platinumBadges ?? 0,
   }));
 
   return (
@@ -95,6 +98,33 @@ export default function StudentHome() {
             </Link>
           </div>
         </div>
+
+        <Link
+          to="/dice"
+          className={`flex items-center justify-between rounded-2xl px-5 py-4 mb-8 ring-1 transition ${
+            diceChallenge?.passed
+              ? "bg-teal/10 ring-teal/40"
+              : "bg-gradient-to-br from-dusk to-night ring-slate-700 hover:ring-flame"
+          }`}
+        >
+          <div>
+            <p className="font-display text-paper">
+              {diceChallenge?.passed
+                ? "Today's streak secured"
+                : diceChallenge
+                ? "Continue today's streak challenge"
+                : "Roll the dice for today's streak"}
+            </p>
+            <p className="font-body text-xs text-slate-400 mt-0.5">
+              {diceChallenge?.passed
+                ? "Come back tomorrow for a new roll."
+                : diceChallenge
+                ? `You rolled a ${diceChallenge.diceValue}, answer to keep your streak alive.`
+                : "A quick, separate challenge, doesn't affect your topic ratings or the leaderboard."}
+            </p>
+          </div>
+          <span className="text-3xl shrink-0 ml-3">{diceChallenge?.passed ? "\u2705" : "\u{1F3B2}"}</span>
+        </Link>
 
         <h2 className="font-display text-lg text-paper mb-3">Pick a topic</h2>
         <div className="flex gap-2 overflow-x-auto pb-2 mb-8">

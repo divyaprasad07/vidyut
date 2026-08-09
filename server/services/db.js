@@ -30,6 +30,7 @@ const COLLECTIONS = [
   "ratings_history",
   "badges",
   "videos",
+  "dice_challenges",
 ];
 
 function emptyStore() {

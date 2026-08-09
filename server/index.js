@@ -17,6 +17,13 @@ import {
   getPlatinumBadgeCount,
 } from "./services/analytics.js";
 import { checkTtsAvailability, synthesizeSpeech, SUPPORTED_TTS_LANGUAGES } from "./services/ttsService.js";
+import {
+  rollForToday,
+  getTodayChallenge,
+  pickRandomQuestions,
+  submitChallenge,
+  getStreakDates,
+} from "./services/diceService.js";
 import { getChatReply, chatConfigured } from "./services/chatService.js";
 import { translateText } from "./services/translateService.js";
 
@@ -107,8 +114,13 @@ app.post("/api/tts", async (req, res) => {
 app.get("/api/students/:id", async (req, res) => {
   const student = await getDoc("students", req.params.id);
   if (!student) return res.status(404).json({ error: "not found" });
-  const attempts = await getStudentQuizHistory(req.params.id);
-  const streak = computeStreak(attempts.map((a) => a.timestamp));
+  // Streak now comes ONLY from passed daily dice challenges, not from
+  // regular topic quizzes, that decoupling is the whole point of the
+  // dice feature: quizzes build your leaderboard rating, the dice
+  // challenge is what keeps your streak alive, deliberately two
+  // different things now.
+  const streakDates = await getStreakDates(req.params.id);
+  const streak = computeStreak(streakDates);
   const platinumBadges = await getPlatinumBadgeCount(req.params.id);
   res.json({ ...student, streak, platinumBadges });
 });
@@ -247,6 +259,45 @@ app.post("/api/attempts", async (req, res) => {
   });
 
   res.json({ attemptId, score, totalQuestions: answers.length, newRating: rating, review });
+});
+
+// ---- Daily dice streak challenge ----
+//
+// Entirely separate from the quiz/attempts system above: this never
+// touches a student's rating or the leaderboard, on purpose. See
+// services/diceService.js for the full design rationale.
+
+app.get("/api/dice/status", async (req, res) => {
+  const { studentId } = req.query;
+  const challenge = await getTodayChallenge(studentId);
+  res.json({ challenge });
+});
+
+app.post("/api/dice/roll", async (req, res) => {
+  const { studentId } = req.body;
+  const student = await getDoc("students", studentId);
+  if (!student) return res.status(404).json({ error: "student not found" });
+  const challenge = await rollForToday(studentId);
+  res.json({ challenge });
+});
+
+app.get("/api/dice/questions", async (req, res) => {
+  const count = Number(req.query.count) || 1;
+  const excludeIds = req.query.exclude ? req.query.exclude.split(",").filter(Boolean) : [];
+  const questions = await pickRandomQuestions(count, excludeIds);
+  // Never send the correct answer to the client, same rule as the main quiz.
+  const safeQuestions = questions.map(({ correctAnswer, ...rest }) => rest);
+  res.json({ questions: safeQuestions });
+});
+
+app.post("/api/dice/submit", async (req, res) => {
+  const { studentId, answers } = req.body;
+  try {
+    const result = await submitChallenge(studentId, answers);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
 // ---- Video lectures (Tier 2) ----
@@ -425,7 +476,16 @@ app.get("/api/teacher/history/:studentId", async (req, res) => {
 
 app.get("/api/teacher/students", async (req, res) => {
   const students = await getCollection("students");
-  res.json(students.map((s) => ({ id: s.id, name: s.name, class: s.class, ratings: s.ratings })));
+  const withBadges = await Promise.all(
+    students.map(async (s) => ({
+      id: s.id,
+      name: s.name,
+      class: s.class,
+      ratings: s.ratings,
+      platinumBadges: await getPlatinumBadgeCount(s.id),
+    }))
+  );
+  res.json(withBadges);
 });
 
 const PORT = process.env.PORT || 4000;

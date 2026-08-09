@@ -2,10 +2,12 @@
 import { useState, useMemo } from "react";
 
 /**
- * entries: [{ studentId, studentName, class, rating }]
+ * entries: [{ studentId, studentName, class, rating, platinumBadges }]
  * Defaults to class-scoped so a student weak overall still has a board
  * they can realistically compete on; the toggle widens it for students
- * who want the aspirational global view.
+ * who want the aspirational global view. Platinum badge counts show
+ * alongside each entry, a second axis of competition independent of the
+ * topic rating this board is actually sorted by.
  */
 export function Leaderboard({ entries, currentStudentClass, currentStudentId, topicName }) {
   const [scope, setScope] = useState("class");
@@ -56,6 +58,17 @@ export function Leaderboard({ entries, currentStudentClass, currentStudentId, to
                 {e.studentName}
                 {isMe && " (you)"}
               </span>
+              {e.platinumBadges > 0 && (
+                <span
+                  className="inline-flex items-center gap-0.5 bg-gradient-to-br from-white to-slate-300 text-night text-[10px] font-display font-bold px-1.5 py-0.5 rounded-full shrink-0"
+                  title={`${e.platinumBadges} Platinum Badge${e.platinumBadges === 1 ? "" : "s"}`}
+                >
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none">
+                    <polygon points="12,2 22,9 18,22 6,22 2,9" fill="currentColor" opacity="0.85" />
+                  </svg>
+                  {e.platinumBadges}
+                </span>
+              )}
               <span className="font-mono text-sm text-teal">{e.rating}</span>
             </li>
           );

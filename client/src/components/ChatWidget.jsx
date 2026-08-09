@@ -52,7 +52,7 @@ export function ChatWidget() {
   // a quiz, the audio would otherwise keep playing invisibly in the
   // background. Same for the panel being closed with the X button, that
   // doesn't unmount anything either. Both cases need an explicit stop.
-  const hidden = location.pathname.startsWith("/quiz/") || location.pathname.startsWith("/teacher");
+  const hidden = location.pathname.startsWith("/quiz/") || location.pathname.startsWith("/teacher") || location.pathname.startsWith("/dice");
   useEffect(() => {
     if (hidden) {
       stopSpeaking();
@@ -66,9 +66,9 @@ export function ChatWidget() {
     return () => stopSpeaking();
   }, []);
 
-  // Hidden during an active quiz (see note above) and on teacher/admin
-  // screens, since this is a student-facing tool, not something that
-  // belongs cluttering the teacher dashboard.
+  // Hidden during an active quiz or dice challenge (see note above) and
+  // on teacher/admin screens, since this is a student-facing tool, not
+  // something that belongs cluttering the teacher dashboard.
   if (hidden) return null;
 
   const send = async () => {
