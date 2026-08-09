@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+server/data/db.json
+server/serviceAccount.json
+server/uploads/*
+!server/uploads/seed/
+!server/uploads/seed/**

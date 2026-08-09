@@ -1,0 +1,144 @@
+// components/ChatWidget.jsx
+//
+// Deliberately small and self-contained: messages live only in this
+// component's state (an array of {role, content}), nothing is persisted
+// server-side or in any database collection, the server route is pure
+// request/response. Closing the panel or reloading the page clears the
+// conversation, which is fine for quick doubt-solving and keeps this
+// feature genuinely light.
+//
+// Hidden on /quiz/* routes on purpose: leaving an always-on "ask AI"
+// button available during an active quiz would be a direct way to get
+// answers, which would undermine the quiz-integrity system elsewhere in
+// this app. It's available on every other screen.
+
+import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { api } from "../services/api";
+
+const MAX_MESSAGE_LENGTH = 500;
+
+export function ChatWidget() {
+  const location = useLocation();
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([]); // [{role: 'user'|'assistant', content}]
+  const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
+  const [unavailable, setUnavailable] = useState(false);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, sending]);
+
+  // Hidden during an active quiz (see note above) and on teacher/admin
+  // screens, since this is a student-facing tool, not something that
+  // belongs cluttering the teacher dashboard.
+  if (location.pathname.startsWith("/quiz/") || location.pathname.startsWith("/teacher")) return null;
+
+  const send = async () => {
+    const text = input.trim();
+    if (!text || sending) return;
+    setInput("");
+    setUnavailable(false);
+    const next = [...messages, { role: "user", content: text.slice(0, MAX_MESSAGE_LENGTH) }];
+    setMessages(next);
+    setSending(true);
+    try {
+      const { reply } = await api.chat(text, messages);
+      setMessages([...next, { role: "assistant", content: reply }]);
+    } catch (err) {
+      console.warn("Chat request failed:", err.message);
+      const isUnconfigured = /not configured/i.test(err.message || "");
+      setUnavailable(isUnconfigured);
+      setMessages([
+        ...next,
+        {
+          role: "assistant",
+          content: isUnconfigured
+            ? "The study helper isn't set up yet, ask your teacher about it."
+            : "Sorry, I couldn't answer that just now. Please try again in a moment.",
+        },
+      ]);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(!open)}
+        className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-flame text-night shadow-lg flex items-center justify-center hover:scale-105 transition"
+        title="Ask a study doubt"
+        aria-label="Open study helper chat"
+      >
+        {open ? (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        ) : (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M4 4h16v11H8l-4 4V4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+            <circle cx="9" cy="9.5" r="1" fill="currentColor" />
+            <circle cx="12" cy="9.5" r="1" fill="currentColor" />
+            <circle cx="15" cy="9.5" r="1" fill="currentColor" />
+          </svg>
+        )}
+      </button>
+
+      {open && (
+        <div className="fixed bottom-24 right-5 z-40 w-[22rem] max-w-[calc(100vw-2.5rem)] h-[28rem] max-h-[70vh] bg-dusk rounded-2xl shadow-2xl ring-1 ring-slate-700 flex flex-col overflow-hidden">
+          <div className="px-4 py-3 bg-night border-b border-slate-700">
+            <p className="font-display text-paper text-sm">Study helper</p>
+            <p className="font-body text-[11px] text-slate-400">Ask a doubt about any subject</p>
+          </div>
+
+          <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-2">
+            {messages.length === 0 && (
+              <p className="font-body text-xs text-slate-500 text-center mt-8 px-4">
+                Stuck on something? Ask a question about Math, Science, English, Social Science, or
+                Hindi and I'll try to help.
+              </p>
+            )}
+            {messages.map((m, i) => (
+              <div
+                key={i}
+                className={`max-w-[85%] rounded-xl px-3 py-2 text-sm font-body ${
+                  m.role === "user"
+                    ? "self-end bg-flame text-night"
+                    : "self-start bg-night text-paper ring-1 ring-slate-700"
+                }`}
+              >
+                {m.content}
+              </div>
+            ))}
+            {sending && (
+              <div className="self-start bg-night text-slate-400 ring-1 ring-slate-700 rounded-xl px-3 py-2 text-sm font-body">
+                Thinking...
+              </div>
+            )}
+          </div>
+
+          <div className="p-3 border-t border-slate-700 flex gap-2">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && !sending && send()}
+              placeholder={unavailable ? "Study helper isn't set up yet" : "Type your doubt..."}
+              maxLength={MAX_MESSAGE_LENGTH}
+              className="flex-1 bg-night text-paper font-body text-sm rounded-lg px-3 py-2 outline-none ring-1 ring-slate-700 focus:ring-teal"
+            />
+            <button
+              onClick={send}
+              disabled={!input.trim() || sending}
+              className="bg-flame disabled:bg-slate-700 disabled:text-slate-500 text-night font-body font-semibold text-sm px-4 rounded-lg"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
