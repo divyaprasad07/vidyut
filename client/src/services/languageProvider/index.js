@@ -6,28 +6,33 @@
 // so PROVIDER below is the one line that needs to change to swap the
 // active provider.
 //
-// Default is "server-tts" (espeak-ng running on our own server, free, no
-// API key), not the browser's speechSynthesis, because browser TTS
-// silently falls back to an English voice for any language that has no
-// voice pack installed on that specific machine, with no error thrown, so
-// students could pick Hindi/Bengali/etc. and just hear English with no
-// indication anything was wrong. espeak-ng ships its own voice data for
-// all 6 supported languages, so it doesn't depend on what's installed
-// locally. Set VITE_LANGUAGE_PROVIDER=webspeech to go back to pure
-// browser TTS (e.g. if the server can't run espeak-ng for some reason),
-// or =bhashini once that pipeline is wired up with a real API key.
+// Default is "hybrid": prefer the browser's own voice for a language when
+// one is genuinely installed (often much more natural-sounding, e.g.
+// Edge's cloud voices), and fall back to espeak-ng (server-side, always
+// works, no API key, but a more robotic/accented voice for Indic
+// languages) when it isn't. This replaced a plain "always use espeak-ng"
+// default: that was fully reliable but every language sounded the same
+// robotic way, no better than it had to be when a good browser voice was
+// actually available. "hybrid" keeps the reliability (checks the real
+// voice list before trusting the browser, so it can't silently fall back
+// to English the way plain browser TTS used to) while getting the better
+// voice whenever the machine has one. Set VITE_LANGUAGE_PROVIDER=webspeech
+// for pure browser TTS, =server-tts to always force espeak-ng, or
+// =bhashini once that pipeline is wired up with a real API key.
 
 import { webSpeechProvider } from "./webSpeechProvider";
 import { serverTtsProvider } from "./serverTtsProvider";
+import { hybridProvider } from "./hybridProvider";
 import { bhashiniProvider } from "./bhashiniProvider";
 
 const REQUESTED = import.meta.env.VITE_LANGUAGE_PROVIDER;
-const PROVIDER = ["webspeech", "server-tts", "bhashini"].includes(REQUESTED) ? REQUESTED : "server-tts";
+const PROVIDER = ["webspeech", "server-tts", "bhashini", "hybrid"].includes(REQUESTED) ? REQUESTED : "hybrid";
 
 const providers = {
   webspeech: webSpeechProvider,
   "server-tts": serverTtsProvider,
   bhashini: bhashiniProvider,
+  hybrid: hybridProvider,
 };
 
 const active = providers[PROVIDER];
@@ -54,6 +59,15 @@ export async function listen(lang) {
   } catch (err) {
     console.warn(`listen() failed via ${PROVIDER}, voice input unavailable this session:`, err);
     return null;
+  }
+}
+
+/** Stop whatever's currently being spoken, if anything. Never throws. */
+export function stopSpeaking() {
+  try {
+    active.stopSpeaking?.();
+  } catch (err) {
+    console.warn(`stopSpeaking() failed via ${PROVIDER}:`, err);
   }
 }
 

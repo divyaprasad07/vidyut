@@ -103,17 +103,41 @@ Bengali, Marathi, Tamil, Telugu), carried into the quiz. On each question,
 a speaker button reads it aloud, and short-answer mode has a mic button
 that fills the text box from speech.
 
-**Speech output (speak) runs on the server via `espeak-ng`**, not the
-browser. This was a deliberate fix: the browser's own speechSynthesis
-silently falls back to whatever English voice is installed when a
-language has no voice pack on that machine, with no error, so selecting
-Hindi could just quietly speak English. espeak-ng ships its own voice
-data for all 6 languages, so it doesn't depend on what's installed
-locally, and it's completely free with no API key.
+**Speech output (speak) prefers your browser's own voice, falls back to
+`espeak-ng` on the server.** This evolved in two steps, worth knowing
+both: originally the browser's own speechSynthesis silently fell back to
+whatever English voice was installed when a language had no voice pack
+on that machine, with no error, so selecting Hindi could just quietly
+speak English. The fix was routing everything through `espeak-ng`
+instead, which ships its own voice data for all 6 languages so it never
+depends on what's installed locally, completely free, no API key. That
+made it reliable, but every language then sounded the same fairly
+robotic way, `espeak-ng`'s Indic-language voices use a basic phoneme
+model that can sound more like an English speaker's approximation than
+a native voice.
 
-### This needs one manual install step on your machine
+The current behavior (`hybrid` provider,
+`client/src/services/languageProvider/hybridProvider.js`) tries to get
+the best of both: before speaking, it checks the browser's actual
+installed voice list for a genuine match (not just "some voice exists"),
+and uses that if found, since browsers like Edge often ship much more
+natural cloud-backed voices for Hindi and other Indian languages. Only
+when no real match exists does it fall back to `espeak-ng`. This
+preserves the original fix (it can't silently end up speaking English
+for a language it doesn't have, because it's checking the real voice
+list first, not just assuming one), while sounding noticeably better
+whenever your machine happens to have a good voice installed. **Whether
+you actually get the better voice depends on what's on your Windows
+machine** — if Hindi still sounds robotic after this update, check
+Windows Settings > Time & Language > Language & region, and see if
+adding the Hindi (or other) language pack installs a matching voice;
+that's outside anything this app controls.
 
-`espeak-ng` is not bundled with Node, you need it installed separately:
+### This needs one manual install step on your machine (for the espeak-ng fallback)
+
+`espeak-ng` is not bundled with Node, you need it installed separately
+so the fallback path works even where your browser has no matching
+voice:
 
 1. Download the Windows installer from
    https://github.com/espeak-ng/espeak-ng/releases (the latest release's
@@ -124,9 +148,10 @@ locally, and it's completely free with no API key.
 4. Restart the server (`npm start`).
 
 If you skip this, the app doesn't break, the speaker button will show
-"Voice output isn't available right now" instead of speaking, since the
-server checks and reports failure rather than crashing. But you do need
-this step for the feature to actually work.
+"Voice output isn't available right now" for any language your browser
+also can't speak natively, since the server checks and reports failure
+rather than crashing. But you do need this step for full reliability
+across all 6 languages.
 
 **Speech input (mic/listen) is unchanged**, still the browser's own
 SpeechRecognition, since there's no free no-API-key server-side
@@ -208,6 +233,31 @@ teacher or trusted adult rather than attempt to counsel a student who
 seems distressed. This is a prompt-level instruction, not a hard
 technical guarantee, worth knowing if you plan to rely on it for
 anything beyond a demo.
+
+### Voice: ask in your language, listen back in your language
+
+The chat panel has a language picker (English, Hindi, Bengali, Marathi,
+Tamil, Telugu). The mic button next to the input transcribes your
+spoken question into that language and fills the text box (it doesn't
+auto-send, so you can check/edit a misheard transcript first). The
+assistant's text replies are always in English (enforced in the system
+prompt), but every reply has a small speaker icon, click it and it
+translates that reply into whichever language the picker is set to and
+reads it aloud, so you can ask in Hindi and listen back in Hindi even
+though the words on screen stay English.
+
+This reuses the same `espeak-ng` text-to-speech and browser speech
+recognition already set up for the quiz's voice feature (section 6), so
+if that's working there, it'll work here too, no extra setup for those
+two pieces. Translation is new here though, the quiz's voice feature
+deliberately does not translate (see section 6), but this chat feature
+does, since an English-only chat would defeat the point of asking in
+your own language. It uses the free MyMemory API for that translation
+step. **This could not be tested from the build sandbox**, since that
+domain isn't reachable from here, so speaking a reply back in a
+non-English language is a genuine first real-world test. If translation
+fails, it falls back to speaking the original English text rather than
+staying silent.
 
 ## 10. Known simplifications (see the honest status write-up in chat)
 

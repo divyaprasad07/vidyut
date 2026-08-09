@@ -17,6 +17,7 @@ import {
 } from "./services/analytics.js";
 import { checkTtsAvailability, synthesizeSpeech, SUPPORTED_TTS_LANGUAGES } from "./services/ttsService.js";
 import { getChatReply, chatConfigured } from "./services/chatService.js";
+import { translateText } from "./services/translateService.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const UPLOADS_DIR = path.join(__dirname, "uploads");
@@ -61,6 +62,19 @@ app.post("/api/chat", async (req, res) => {
     console.warn("Chat request failed:", err.message);
     const status = err.message?.includes("not configured") ? 503 : 400;
     res.status(status).json({ error: err.message });
+  }
+});
+
+// Translates text between languages, used so a chat reply (always in
+// English) can be read aloud in the student's chosen language.
+app.post("/api/translate", async (req, res) => {
+  const { text, targetLang, sourceLang } = req.body;
+  try {
+    const translatedText = await translateText(text, targetLang, sourceLang || "en");
+    res.json({ translatedText });
+  } catch (err) {
+    console.warn("Translation failed:", err.message);
+    res.status(400).json({ error: err.message });
   }
 });
 

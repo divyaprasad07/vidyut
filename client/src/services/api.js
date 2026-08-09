@@ -81,4 +81,6 @@ export const api = {
     return res.json(); // { reply }
   },
   chatStatus: () => request("/chat/status"),
+  translate: (text, targetLang, sourceLang = "en") =>
+    request("/translate", { method: "POST", body: JSON.stringify({ text, targetLang, sourceLang }) }),
 };
