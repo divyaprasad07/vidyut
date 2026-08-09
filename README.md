@@ -7,7 +7,7 @@
 [![Made for Hackathon](https://img.shields.io/badge/Built%20for-Hackathon-534AB7)](#)
 
 <!-- Optional: replace with your team/track name -->
-Built by Team **[team name]** for **[hackathon name]**
+Built by Team **TRIPLE STACK** for **IEM HACKS 4.0**
 
 </div>
 
