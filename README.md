@@ -52,7 +52,17 @@ Built for classrooms where students are at very different levels, don't always h
 
 ## 🖼️ Screenshots
 
-<!-- Add your screenshots below. Suggested: student home, quiz screen, teacher dashboard, profile, video library -->
+<img width="1906" height="900" alt="Image" src="https://github.com/user-attachments/assets/b3b52bde-8b13-434c-b790-8d5785a0ac5b" />
+<img width="1917" height="912" alt="Image" src="https://github.com/user-attachments/assets/90e092fa-5a12-4ac6-adf7-3758df65a5bc" />
+<img width="1900" height="917" alt="Image" src="https://github.com/user-attachments/assets/f311f7ee-82d2-43e3-b395-28b5f31b5bc7" />
+<img width="1913" height="912" alt="Image" src="https://github.com/user-attachments/assets/f0422751-0cd4-44d8-a855-c2647354cbc3" />
+<img width="1856" height="882" alt="Image" src="https://github.com/user-attachments/assets/c8ef5843-cf29-4924-a7bc-514b8e86409c" />
+<img width="1882" height="912" alt="Image" src="https://github.com/user-attachments/assets/28b96f19-9644-4617-97dc-d1f224398a80" />
+<img width="1917" height="1078" alt="Image" src="https://github.com/user-attachments/assets/898ccf2e-aab6-41df-9847-1b13f7764a94" />
+<img width="653" height="626" alt="Image" src="https://github.com/user-attachments/assets/f71886bc-83d3-4fc8-8367-6b9f3dbd44a1" />
+<img width="828" height="627" alt="Image" src="https://github.com/user-attachments/assets/5c480dae-f29a-4dd5-a571-0f5b01e82ff2" />
+<img width="836" height="646" alt="Image" src="https://github.com/user-attachments/assets/824956a8-9372-4cee-a31e-81a94ff2a0c4" />
+<img width="646" height="626" alt="Image" src="https://github.com/user-attachments/assets/8937c207-5dea-4166-9b12-70571a68940b" />|
 
 ### Frontend
 
@@ -80,7 +90,10 @@ Built for classrooms where students are at very different levels, don't always h
 
 | Home | Quiz | Profile |
 |---|---|---|
-| <!-- mobile screenshot --> | <!-- mobile screenshot --> | <!-- mobile screenshot --> |
+| <img width="653" height="626" alt="Image" src="https://github.com/user-attachments/assets/f71886bc-83d3-4fc8-8367-6b9f3dbd44a1" />
+<img width="828" height="627" alt="Image" src="https://github.com/user-attachments/assets/5c480dae-f29a-4dd5-a571-0f5b01e82ff2" />
+<img width="836" height="646" alt="Image" src="https://github.com/user-attachments/assets/824956a8-9372-4cee-a31e-81a94ff2a0c4" />
+<img width="646" height="626" alt="Image" src="https://github.com/user-attachments/assets/8937c207-5dea-4166-9b12-70571a68940b" />|
 
 ---
 
