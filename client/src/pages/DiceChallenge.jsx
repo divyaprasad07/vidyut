@@ -10,15 +10,14 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import { OfflineIndicator } from "../components/OfflineIndicator";
+import { Dice3D } from "../gamification/Dice3D";
 
 const STUDENT_ID = "stu_1";
-const DICE_FACES = ["\u2680", "\u2681", "\u2682", "\u2683", "\u2684", "\u2685"]; // ⚀-⚅
 
 export default function DiceChallenge() {
   const navigate = useNavigate();
   const [phase, setPhase] = useState("rolling"); // rolling -> answering -> result
   const [diceValue, setDiceValue] = useState(null);
-  const [animatedFace, setAnimatedFace] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answered, setAnswered] = useState([]);
@@ -43,23 +42,12 @@ export default function DiceChallenge() {
     (async () => {
       // Roll first (idempotent server-side, so this is safe even if the
       // student already rolled today and is just resuming).
-      const { challenge } = await api.diceRoll(STUDENT_ID);
+      const rollPromise = api.diceRoll(STUDENT_ID);
+      const minTumbleTime = new Promise((resolve) => setTimeout(resolve, 1200));
+      const [{ challenge }] = await Promise.all([rollPromise, minTumbleTime]);
       if (cancelled) return;
-      const finalValue = challenge.diceValue;
-
-      // Quick tumble animation, then settle on the real server value, so
-      // "roll" feels like an event rather than an instant number.
-      let ticks = 0;
-      const interval = setInterval(() => {
-        setAnimatedFace(Math.floor(Math.random() * 6));
-        ticks++;
-        if (ticks > 10) {
-          clearInterval(interval);
-          setDiceValue(finalValue);
-          setAnimatedFace(finalValue - 1);
-          setTimeout(() => loadQuestionsForRoll(finalValue), 500);
-        }
-      }, 90);
+      setDiceValue(challenge.diceValue); // triggers the cube's settle transition, see Dice3D
+      setTimeout(() => loadQuestionsForRoll(challenge.diceValue), 700); // let the settle animation finish first
     })();
     return () => {
       cancelled = true;
@@ -95,7 +83,7 @@ export default function DiceChallenge() {
       <div className="min-h-screen bg-night flex flex-col items-center justify-center gap-6 p-6">
         <OfflineIndicator />
         <p className="font-body text-slate-400">Rolling...</p>
-        <div className="text-8xl text-flame leading-none">{DICE_FACES[animatedFace]}</div>
+        <Dice3D value={diceValue} rolling={diceValue == null} />
       </div>
     );
   }
@@ -110,7 +98,9 @@ export default function DiceChallenge() {
             <span className="font-body text-sm text-slate-400">
               Streak challenge, question {currentIndex + 1} of {questions.length}
             </span>
-            <span className="text-2xl text-flame">{DICE_FACES[diceValue - 1]}</span>
+            <span className="w-8 h-8 rounded-lg bg-flame text-night font-display font-bold flex items-center justify-center text-sm">
+              {diceValue}
+            </span>
           </div>
 
           {loading || !question ? (

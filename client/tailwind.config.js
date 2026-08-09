@@ -59,10 +59,18 @@ export default {
           "60%": { transform: "scale(1.08) rotate(3deg)", opacity: "1" },
           "100%": { transform: "scale(1) rotate(0deg)", opacity: "1" },
         },
+        "dice-tumble": {
+          "0%": { transform: "rotateX(0deg) rotateY(0deg)" },
+          "25%": { transform: "rotateX(220deg) rotateY(140deg)" },
+          "50%": { transform: "rotateX(410deg) rotateY(300deg)" },
+          "75%": { transform: "rotateX(560deg) rotateY(480deg)" },
+          "100%": { transform: "rotateX(720deg) rotateY(680deg)" },
+        },
       },
       animation: {
         "stone-pulse": "stone-pulse 2.4s ease-in-out infinite",
         "unlock-pop": "unlock-pop 0.5s cubic-bezier(.2,1.4,.4,1) forwards",
+        "dice-tumble": "dice-tumble 1s linear infinite",
       },
     },
   },

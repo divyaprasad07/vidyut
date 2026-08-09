@@ -54,12 +54,20 @@ export async function rollForToday(studentId) {
  * difficulty here, this isn't about mastery). `excludeIds` keeps a retry
  * from repeating the exact same questions as a prior failed attempt
  * today, where possible.
+ *
+ * Restricted to English-language subjects (Math, Science, English,
+ * Social Science), excluding Hindi, Bengali, and Tamil, so the dice
+ * challenge stays in one language regardless of which topic's questions
+ * get randomly picked, per explicit request.
  */
+const ENGLISH_TOPICS = ["math", "science", "english", "social_science"];
+
 export async function pickRandomQuestions(count, excludeIds = []) {
   const all = await getCollection("questions");
+  const englishOnly = all.filter((q) => ENGLISH_TOPICS.includes(q.topic));
   const excluded = new Set(excludeIds);
-  let pool = all.filter((q) => !excluded.has(q.id));
-  if (pool.length < count) pool = all; // not enough unseen left, allow repeats rather than short-changing the count
+  let pool = englishOnly.filter((q) => !excluded.has(q.id));
+  if (pool.length < count) pool = englishOnly; // not enough unseen left, allow repeats rather than short-changing the count
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, count);
 }
