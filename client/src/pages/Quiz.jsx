@@ -118,6 +118,7 @@ export default function Quiz() {
         questionsAttempted: finalAnswers.length,
         review: result?.review, // undefined when queued offline until it syncs
         score: result?.score,
+        platinumEarned: result?.platinumEarned, // undefined when queued offline until it syncs
       });
       setDone(true);
     },
@@ -197,6 +198,17 @@ export default function Quiz() {
       <div className="min-h-screen bg-night flex flex-col items-center p-6">
         <OfflineIndicator />
         <div className="w-full max-w-lg mt-16 text-center">
+          {result.platinumEarned && (
+            <div className="animate-unlock-pop bg-gradient-to-br from-white via-slate-100 to-slate-300 text-night rounded-2xl px-6 py-5 mb-6 ring-2 ring-flame">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="mx-auto mb-2">
+                <polygon points="12,2 22,9 18,22 6,22 2,9" fill="currentColor" opacity="0.9" />
+              </svg>
+              <p className="font-display text-lg font-bold">You've won a Platinum Badge!</p>
+              <p className="font-body text-xs mt-1 opacity-80">
+                Perfect score on an 8+ question Multiple Choice quiz, that's a rare one.
+              </p>
+            </div>
+          )}
           <h1 className="font-display text-3xl text-paper mb-2">
             {result.autoSubmitted ? "Quiz ended early" : "Quiz submitted"}
           </h1>

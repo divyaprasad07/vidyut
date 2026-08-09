@@ -258,7 +258,13 @@ app.post("/api/attempts", async (req, res) => {
     lastActive: new Date().toISOString(),
   });
 
-  res.json({ attemptId, score, totalQuestions: answers.length, newRating: rating, review });
+  // Same criteria as getPlatinumBadgeCount (analytics.js): perfect score,
+  // 8+ questions, Multiple Choice mode specifically. Told to the client
+  // here so the results screen can show the congratulatory moment right
+  // when it happens, not just reflect the count silently later.
+  const platinumEarned = quizMode === "mcq" && answers.length >= 8 && score === answers.length;
+
+  res.json({ attemptId, score, totalQuestions: answers.length, newRating: rating, review, platinumEarned });
 });
 
 // ---- Daily dice streak challenge ----

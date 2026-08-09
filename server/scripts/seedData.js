@@ -3,7 +3,7 @@
 // Generates realistic synthetic data, no "Student1"/"Question1" placeholders.
 // Run with: npm run seed
 
-import { setDoc, addDoc } from "../services/db.js";
+import { setDoc, addDoc, getCollection, getDoc, updateDoc } from "../services/db.js";
 import { startingRating, updateRating, DIFFICULTY_BANDS } from "../services/eloEngine.js";
 import fs from "fs";
 import path from "path";
@@ -456,6 +456,7 @@ async function seed() {
   });
 
   await seedVideos();
+  await seedPlatinumBadges();
 
   console.log("\nSeed complete.");
 }
@@ -581,6 +582,79 @@ async function seedVideos() {
     `Seeded ${seededCount} lecture video${seededCount === 1 ? "" : "s"} across ${seededLanguages.size} language${seededLanguages.size === 1 ? "" : "s"}` +
       (skipped > 0 ? ` (${skipped} skipped, see warnings above).` : ".")
   );
+}
+
+/**
+ * Genuinely earns a Platinum badge for a handful of students, real
+ * qualifying attempts (perfect score, 8+ questions, Multiple Choice mode)
+ * written the same way the live app's POST /api/attempts route would,
+ * not a fabricated count. Only used so the leaderboard has real badge
+ * counts to show for a demo, rather than looking empty. Each award only
+ * touches a topic that still has 16+ unanswered questions for that
+ * student, so at least 8 stay free for real quiz-taking afterward, same
+ * headroom principle as the rest of the seed data.
+ */
+async function seedPlatinumBadges() {
+  console.log("Seeding a few genuine Platinum badges (real perfect-MCQ attempts) for leaderboard realism...");
+  const topicIds = TOPICS.map((t) => t.id);
+  // studentId -> how many separate perfect-MCQ attempts (different topics each) to award
+  const PLAN = { stu_1: 2, stu_2: 1, stu_5: 3, stu_8: 1 };
+  let totalAwarded = 0;
+
+  for (const [studentId, count] of Object.entries(PLAN)) {
+    let student = await getDoc("students", studentId);
+    if (!student) continue;
+    const attempts = await getCollection("attempts");
+    const allQuestions = await getCollection("questions");
+    const shuffledTopics = [...topicIds].sort(() => Math.random() - 0.5);
+    let awardedForThisStudent = 0;
+
+    for (const topicId of shuffledTopics) {
+      if (awardedForThisStudent >= count) break;
+
+      const topicQuestions = allQuestions.filter((q) => q.topic === topicId);
+      const answeredIds = new Set(
+        attempts
+          .filter((a) => a.studentId === studentId && a.topicId === topicId)
+          .flatMap((a) => a.questionIds)
+      );
+      const unanswered = topicQuestions.filter((q) => !answeredIds.has(q.id));
+      if (unanswered.length < 16) continue; // leaves at least 8 free for real quiz-taking after this
+
+      const chosen = unanswered.slice(0, 8);
+      const ts = daysAgo(randInt(0, 5));
+      let rating = student.ratings?.[topicId]?.rating ?? startingRating();
+      const history = student.ratings?.[topicId]?.history ?? [];
+      let timeTakenSec = 0;
+      for (const q of chosen) {
+        rating = updateRating(rating, q.difficultyRating, true);
+        history.push({ rating, ts });
+        timeTakenSec += randInt(12, 30);
+      }
+
+      await addDoc("attempts", {
+        studentId,
+        topicId,
+        questionIds: chosen.map((q) => q.id),
+        score: chosen.length,
+        questionsAttempted: chosen.length,
+        timeTakenSec,
+        timestamp: ts,
+        autoSubmitted: false,
+        violationType: null,
+        quizMode: "mcq", // required: Platinum only counts Multiple Choice mode
+      });
+
+      const newRatings = { ...student.ratings, [topicId]: { rating, history } };
+      await updateDoc("students", studentId, { ratings: newRatings });
+      student = { ...student, ratings: newRatings }; // keep building on this student's updates across topics
+
+      awardedForThisStudent++;
+      totalAwarded++;
+    }
+  }
+
+  console.log(`Awarded ${totalAwarded} genuine Platinum-qualifying attempts across ${Object.keys(PLAN).length} students.`);
 }
 
 seed().catch((err) => {
