@@ -15,6 +15,8 @@ const TOPICS = [
   { id: "english", name: "English" },
   { id: "social_science", name: "Social Science" },
   { id: "hindi", name: "Hindi" },
+  { id: "bengali", name: "Bengali" },
+  { id: "tamil", name: "Tamil" },
 ];
 
 export default function TeacherDashboard() {

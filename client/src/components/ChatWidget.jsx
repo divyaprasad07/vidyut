@@ -183,7 +183,8 @@ export function ChatWidget() {
             {messages.length === 0 && (
               <p className="font-body text-xs text-slate-500 text-center mt-8 px-4">
                 Stuck on something? Type or use the mic to ask a question about Math, Science,
-                English, Social Science, or Hindi, in any of the 6 languages above.
+                English, Social Science, Hindi, Bengali, or Tamil, in any of the 6
+                languages above.
               </p>
             )}
             {messages.map((m, i) => (

@@ -13,6 +13,14 @@ const QUIZ_MODES = [
   { id: "short", label: "Short answer" },
 ];
 const VOICE_LANGUAGES = { en: "English", hi: "Hindi", bn: "Bengali", mr: "Marathi", ta: "Tamil", te: "Telugu" };
+// When a subject's own content is genuinely written in one of the 6
+// voice languages (Hindi, Bengali, Tamil are real language subjects,
+// not just topics), picking that subject defaults the voice language to
+// match, so read-aloud and voice answers just work without an extra
+// manual step. Other subjects (Math, Science, etc.) aren't tied to a
+// language, so picking those leaves the voice language as whatever the
+// student already had selected.
+const TOPIC_TO_VOICE_LANG = { hindi: "hi", bengali: "bn", tamil: "ta" };
 
 export default function StudentHome() {
   const [student, setStudent] = useState(null);
@@ -27,6 +35,11 @@ export default function StudentHome() {
     api.topics().then(setTopics);
     api.allStudents().then(setAllStudents);
   }, []);
+
+  const selectTopic = (topicId) => {
+    setActiveTopic(topicId);
+    if (TOPIC_TO_VOICE_LANG[topicId]) setVoiceLang(TOPIC_TO_VOICE_LANG[topicId]);
+  };
 
   if (!student) {
     return <div className="min-h-screen bg-night flex items-center justify-center text-paper font-body">Loading...</div>;
@@ -75,7 +88,7 @@ export default function StudentHome() {
           {topics.map((t) => (
             <button
               key={t.id}
-              onClick={() => setActiveTopic(t.id)}
+              onClick={() => selectTopic(t.id)}
               className={`whitespace-nowrap px-4 py-2 rounded-full font-body text-sm transition ${
                 activeTopic === t.id ? "bg-flame text-night font-semibold" : "bg-dusk text-slate-300"
               }`}

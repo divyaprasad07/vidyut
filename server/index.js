@@ -45,6 +45,8 @@ const TOPICS = [
   { id: "english", name: "English" },
   { id: "social_science", name: "Social Science" },
   { id: "hindi", name: "Hindi" },
+  { id: "bengali", name: "Bengali" },
+  { id: "tamil", name: "Tamil" },
 ];
 
 app.get("/api/health", (req, res) => res.json({ ok: true, dbMode }));

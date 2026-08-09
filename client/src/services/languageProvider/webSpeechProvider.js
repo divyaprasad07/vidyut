@@ -40,17 +40,37 @@ export async function hasNativeVoice(lang) {
   return voices.some((v) => v.lang.toLowerCase().startsWith(target));
 }
 
+// Tracks whether the most recent stop was intentional (our own
+// stopSpeaking() call), as opposed to a genuine playback failure. The
+// browser reports a cancelled utterance as an "error" event, same as a
+// real failure, so without this distinction, stopping speech mid-sentence
+// looked identical to a failure, and hybridProvider would "helpfully"
+// fall back to starting a fresh espeak-ng clip, exactly backwards from
+// what stopping was supposed to do.
+let intentionalStop = false;
+
 export const webSpeechProvider = {
   async speak(text, lang) {
     if (!("speechSynthesis" in window)) {
       throw new Error("speechSynthesis not supported in this browser");
     }
+    intentionalStop = false; // reset before each new utterance, only errors during THIS one should check it
     window.speechSynthesis.cancel(); // clear any queued/playing utterance first, don't stack them up
     return new Promise((resolve, reject) => {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = LOCALE_MAP[lang] || "en-IN";
       utterance.onend = () => resolve();
-      utterance.onerror = (e) => reject(e.error);
+      utterance.onerror = (e) => {
+        // An intentional stop, or the browser's own cancellation codes,
+        // resolve quietly rather than being treated as a real failure.
+        // A real failure is what should trigger hybridProvider's
+        // fallback to espeak-ng, not the user choosing to stop.
+        if (intentionalStop || e.error === "canceled" || e.error === "interrupted") {
+          resolve();
+        } else {
+          reject(e.error);
+        }
+      };
       window.speechSynthesis.speak(utterance);
     });
   },
@@ -72,6 +92,7 @@ export const webSpeechProvider = {
   },
 
   stopSpeaking() {
+    intentionalStop = true;
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
   },
 };

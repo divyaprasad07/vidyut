@@ -96,6 +96,26 @@ data has 4 MCQ options generated alongside its free-text answer, so all
 three modes work on the same question bank; scoring is the same
 case-insensitive match either way.
 
+### Subjects
+
+7 subjects total: Mathematics, Science, English, Social Science, Hindi,
+Bengali, and Tamil (30 questions each, 210 total). The three language
+subjects (Hindi, Bengali, Tamil) are genuine grammar and vocabulary
+questions written in that language's own script (synonyms, antonyms,
+sentence structure, idioms), not translated content. **Worth flagging
+honestly**: the Bengali and Tamil content was written carefully using
+standard textbook-level examples, but I'm not a certified speaker of
+either language, so I'd genuinely recommend having a Bengali and Tamil
+teacher spot-check it before relying on it with real students, same
+caution I'd give for any language content outside what I can verify with
+full confidence.
+
+Picking Hindi, Bengali, or Tamil as the subject on the home screen also
+auto-switches the "Voice language" picker to match, so the read-aloud
+and voice-answer features just work in that language without an extra
+manual step, you can still override it back to something else if you
+want.
+
 ## 6. Vernacular voice interaction
 
 There's a "Voice language" picker on the home screen (English, Hindi,
@@ -204,7 +224,7 @@ twice then submits on the third.
 
 A small floating chat button (bottom-right) on the student-facing
 screens, for academic doubts, "explain how photosynthesis works,"
-"why does 2x + 5 = 15 mean x = 5," across all 5 subjects. Kept
+"why does 2x + 5 = 15 mean x = 5," across all 7 subjects. Kept
 deliberately light: no chat history is saved anywhere, no new database
 collection, the conversation lives only in the browser tab and clears on
 reload. Uses Groq's free-tier chat API.
