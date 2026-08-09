@@ -74,7 +74,11 @@ export default function DiceChallenge() {
   };
 
   const retry = () => {
-    setResult(null);
+    // Deliberately NOT clearing `result` here: the result screen stays
+    // mounted (reading result.passed) until loadQuestionsForRoll's await
+    // finishes and flips phase to "answering". Clearing result early left
+    // a window where phase was still "result" but result was null, which
+    // crashed on result.passed with no error boundary, blank page.
     loadQuestionsForRoll(diceValue);
   };
 
@@ -148,6 +152,16 @@ export default function DiceChallenge() {
   }
 
   // phase === "result"
+  if (!result) {
+    // Defensive: should be unreachable now that retry() no longer clears
+    // result early, but a blank crash is a bad enough failure mode that
+    // this is worth guarding directly rather than trusting call order.
+    return (
+      <div className="min-h-screen bg-night flex items-center justify-center">
+        <p className="font-body text-slate-400">Loading...</p>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-night flex flex-col items-center p-6">
       <OfflineIndicator />
