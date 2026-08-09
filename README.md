@@ -17,7 +17,7 @@ Built by Team **[team name]** for **[hackathon name]**
 
 | Live Deployment | Demo Video | Architecture |
 |---|---|---|
-| https://vidyut-4xwl.onrender.com| <!-- ADD DEMO VIDEO LINK HERE (YouTube/Drive) --> | [View diagram](#-architecture) |
+| https://vidyut-4xwl.onrender.com| https://drive.google.com/file/d/1uIvKuHIG_voFYEe5TOQ0wtVu58ZUJRVu/view?usp=sharing | [View diagram](#-architecture) |
 
 ---
 
