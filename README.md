@@ -17,7 +17,7 @@ Built by Team **[team name]** for **[hackathon name]**
 
 | Live Deployment | Demo Video | Architecture |
 |---|---|---|
-| <!-- ADD DEPLOYED APP LINK HERE, e.g. https://vidyut.vercel.app --> | <!-- ADD DEMO VIDEO LINK HERE (YouTube/Drive) --> | [View diagram](#-architecture) |
+| https://vidyut-4xwl.onrender.com| <!-- ADD DEMO VIDEO LINK HERE (YouTube/Drive) --> | [View diagram](#-architecture) |
 
 ---
 
